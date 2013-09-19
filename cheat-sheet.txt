@@ -1,0 +1,58 @@
+<div class="talk-overview">
+  <h2><a href="">Middleman</a></h2>
+
+  <div class="meta">
+    by <a href="" class="author">Pete Nicholls</a>
+    on <time>18 Sep 2013</time>
+  </div>
+  
+  <p>Static site generation – how far can you go?</p>
+</div>
+
+<div class="talk-overview">
+  <h2><a href="">Middleman</a></h2>
+
+  <div class="meta">
+    by <a href="" class="author">Pete Nicholls</a>
+    on <time>18 Sep 2013</time>
+  </div>
+  
+  <p>Static site generation – how far can you go?</p>
+</div>
+
+<div class="talk">
+  <h1><a href="">Middleman</a></h1>
+
+  <div class="meta">
+    by <a href="" class="author">Pete Nicholls</a>
+    on <time>18 Sep 2013</time>
+  </div>
+</div>
+
+<div class="author">
+  <%= image_tag "http://www.gravatar.com/avatar/ca3dc3f93730afb41d6753d8bf010a38?s=150", alt: "Pete Nicholls", class: "photo" %>
+  
+  <h1><a href="">Pete Nicholls</a></h1>
+
+  <p>
+    Twitter: <a href="">@aupajo</a><br>
+    GitHub: <a href="">@aupajo</a>
+  </p>
+</div>
+
+set :markdown_engine, :redcarpet
+set :markdown, fenced_code_blocks: true, smartypants: true
+
+activate :syntax
+
+    
+<style type="text/css" media="screen">
+  <%= Rouge::Themes::Base16::Solarized.render(scope: '.highlight') %>
+</style>
+    
+
+configure :build do
+  activate :minify_css
+  activate :minify_javascript
+  activate :asset_hash
+end
