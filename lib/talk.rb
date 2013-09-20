@@ -18,8 +18,10 @@ class Talk < SimpleDelegator
       resource.url.start_with?('/talks')
     end
 
-    matching_resources.map do |resource|
+    talks = matching_resources.map do |resource|
       Talk.new(resource)
     end
+
+    talks.sort_by(&:presented_at).reverse
   end
 end
