@@ -1,0 +1,39 @@
+#!/bin/sh
+
+# Exit from the script if any statement not in a conditional returns non-true
+set -e
+
+echo "NZ RUBY TALKS"
+
+ruby_version="2.0.0"
+
+# Test for Ruby 2.0.0
+if test $(ruby -e "print RUBY_VERSION") = "$ruby_version"
+then
+  echo "  + Ruby $ruby_version found."
+else
+  echo "==> You need to install Ruby $ruby_version."
+  echo "    RVM is good place to start: https://rvm.io/"
+  exit 1
+fi
+
+# Test for Bundler
+if test $(which bundle)
+then
+  echo "  + Bundler found."
+else
+  echo "==> You need to install Bundler. To install it, run:"
+  echo "      gem install bundler"
+  exit 1
+fi
+
+echo "  + Installing gems..."
+bundle install --quiet
+echo "  + Gems installed."
+
+cat <<footer
+==> You're good to go!
+
+    Run 'bundle exec middleman server' to serve the site.
+    Run 'bundle exec middleman build' to build the site.
+footer

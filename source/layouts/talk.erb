@@ -1,0 +1,17 @@
+<% wrap_layout :layout do %>
+
+  <div class="talk">
+    <h1><%= link_to current_talk.title, current_talk.url %></h1>
+
+    <div class="meta">
+      by <span class="author"><%= current_talk.author %></span>
+      on <time datetime="<%= current_talk.timestamp %>">
+          <%= current_talk.presented_at %>
+         </time>
+      at <%= current_talk.venue %>
+    </div>
+
+    <%= yield %>
+  </div>
+
+<% end %>

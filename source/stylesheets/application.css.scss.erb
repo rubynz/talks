@@ -7,9 +7,10 @@ $gutter: 80px;
 body {
   background: white;
   color: black;
-  font: 14pt/1.6em "Gotham Book", serif;
+  font: 14pt/1.6em "proxima-nova", sans-serif;
   margin: 2em auto;
   width: $article-width + ($aside-width + $gutter) * 2;
+  -webkit-font-smoothing: antialias;
 }
 
 strong {
@@ -34,14 +35,14 @@ a {
 }
 
 ul {
-  list-style-type: disc;
+  list-style-type: square;
   margin: 1em 0 1em 2em;
 }
 
 h1, h2 {
   line-height: 1.2em;
-  font-weight: bold;
-  font-family: "Gotham Bold", sans-serif;
+  font-weight: 600;
+  font-family: "freight-sans-pro", sans-serif;
 }
 
 h1 {
@@ -53,30 +54,37 @@ h2 {
 }
 
 aside {
-  font-family: "Gotham Bold", sans-serif;
+  font-weight: 600;
+  font-family: "freight-sans-pro", sans-serif;
   float: left;
   width: 200px;
   
-  figure {
+  .logo {
+    color: black;
+    display: block;
     font-size: 1.6em;
     text-align: center;
     
     img {
       margin-bottom: 0.5em;
     }
+
+    &:hover {
+      border-style: none;
+    }
   }
   
   nav {
     margin: 1em 0;
-  }
   
-  a {
-    display: block;
-    float: left;
-    clear: left;
-    margin: 0.5em;
-    color:  #CA1D00;
-    border-bottom: 2px solid #eee;
+    a {
+      display: block;
+      float: left;
+      clear: left;
+      margin: 0.5em;
+      color:  #CA1D00;
+      border-bottom: 2px solid #eee;
+    }
   }
 }
 
@@ -107,3 +115,5 @@ article {
     margin-bottom: 1em;
   }
 }
+
+<%= Rouge::Themes::Base16::Solarized.render(scope: '.highlight') %>

@@ -1,1 +1,7 @@
-It's a little empty here…
+---
+title: All talks
+---
+
+<% talks.each do |talk| %>
+  <%= partial "talk", locals: { talk: talk } %>
+<% end %>
