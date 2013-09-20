@@ -1,0 +1,7 @@
+<div class="talk-overview">
+  <h2><%= link_to talk.title, talk.url %></h2>
+  
+  <%= partial "talks/meta", locals: { talk: talk } %>
+
+  <p><%= talk.intro %></p>
+</div>
