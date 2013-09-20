@@ -1,7 +1,7 @@
 <% wrap_layout :layout do %>
 
   <div class="talk">
-    <h1><%= link_to current_talk.title, current_talk.url %></h1>
+    <h1><%= current_talk.title %></h1>
 
     <%= partial "talks/meta", locals: { talk: current_talk } %>
 
