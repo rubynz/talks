@@ -2,7 +2,7 @@
 
 Talks given at NZ Ruby groups, powered by [Middleman](http://middlemanapp.com).
 
-## Developing
+## Development environment
 
 Clone this repository.
 
@@ -15,6 +15,7 @@ On Windows:
 1. Install [Ruby 2.0.0](http://ruby-lang.org)
 2. Install [Bundler](http://gembundler.com)
 3. Run `bundle install` from the project directory
+4. Run `bundle exec middleman server` to start a local server
 
 ## Publishing
 
