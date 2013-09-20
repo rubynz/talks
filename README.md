@@ -1,6 +1,6 @@
 # NZ Ruby Talks
 
-Talks given at NZ Ruby groups, powered by [Middleman](http://middelmanapp.com).
+Talks given at NZ Ruby groups, powered by [Middleman](http://middlemanapp.com).
 
 ## Developing
 
