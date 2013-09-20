@@ -8,3 +8,5 @@ gem "middleman-syntax"
 
 # Use RedCarpet for Markdown
 gem "redcarpet"
+
+gem "middleman-gh-pages"
