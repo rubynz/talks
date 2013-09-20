@@ -1,0 +1,27 @@
+---
+title: Solving Imaginary Problems
+layout: talk
+author: Daniel Fone
+venue: Christchurch Ruby
+date: 2013-09-19
+intro:
+  Using TDD to solve an (non-trivial but pointless) interview-style problem, while rolling our own test framework.
+---
+
+The interview question:
+
+```ruby
+def f(n)
+  # define f so that f(f(n)) == -n
+end
+```
+
+Approach to solving:
+
+1. Define problem…
+2. … with tests
+3. Write the code we wish we had
+4. Implement that code, quick and dirty
+5. Tests passing? Refactor!
+
+See the [finished result on GitHub](https://github.com/danielfone/imaginary-problem) and [the commit log that got us there](https://github.com/danielfone/imaginary-problem/commits/master).
