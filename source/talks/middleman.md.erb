@@ -7,7 +7,231 @@ date: 2013-09-19
 intro: Static site generation with Middleman.
 ---
 
-*(Notes coming soon.)*
+[Middleman](http://middlemanapp.com) is a static site generator, similar to [Jekyll](http://jekyllrb.com) (which powers [GitHub Pages](http://pages.github.com/)) or [Stasis](http://stasis.me).
+
+Static site generators let you break up your website into templates and pages that are compiled together to create a static HTML website.
+
+In this example, we're going to build a site to host notes on talks.
+
+## Starting out
+
+Install Middleman:
+
+    gem install middleman
+
+Generate a new site:
+
+    middleman init talks
+
+Start a local server by `cd`-ing into the newly created `talks` directory and running:
+
+    bundle exec middleman server
+
+Your site will be served up from [http://localhost:4567](http://localhost:4567).
+
+## Adding a talk
+
+Let's add a talk. Create a `source/talks` directory, and add a new file called `middleman.md.erb`:
+
+```md
+---
+title: Middleman
+layout: talk
+author: Pete Nicholls
+---
+Welcome to my talk!
+```
+
+The two sets of three dashes (`---`) delineate the page's metadata. The metadata, also known as the **frontmatter**, consists of [YAML](http://yaml.org/). Everything following the frontmatter is the content of the page (in this case, written in [Markdown](http://daringfireball.net/projects/markdown/)).
+
+## Understanding frontmatter
+
+For this page, we have three pieces of frontmatter: the `layout` of the page, the `title` and the `author` of the talk.
+
+The `layout` attribute has a special meaning in Middleman. When given, it tells Middleman to use a particular layout inside `source/layouts` (in this case, we gave `talk` as the value, which corresponds to `source/layouts/talk.erb`). If no `layout` is given, it will fall back to the default layout (typically `source/layouts/layout.erb`).
+
+The `title` and `author` are attributes we simply made up. Any [valid YAML](http://yaml.org/) is fair game for the frontmatter. We can use these attributes elsewhere in the site.
+
+## Generating a list of talks
+
+Now that we have our talks, we want to create a list of them to display on the home page. The simplest way we can do this is through Middleman's `sitemap.resources`, which contains a list of all resources in the site.
+
+We can filter these resources by URL, for instance, to select only those that are inside the `source/talks` directory.
+
+Inside `source/index.html.erb`:
+
+```erb
+<h1>All talks</h1>
+
+<ul>
+  <%% sitemap.resources.select { |resource| resource.start_with?('/talks') }.each do |talk| %>
+    <li><%%= link_to talk.data.title, talk.url %></li>
+  <%% end %>
+</ul>
+```
+
+We access the the frontmatter through the `data` attribute of the resource.
+
+## Extracting a helper method
+
+`link_to` is a helper method provided to us by Middleman for generating links. We can write our own helper methods, too.
+
+Let's extract the awkward `sitemap.resources.select` code in the example above to something nicer.
+
+Inside `config.rb`, add the following method definition to the `helpers` block:
+
+```ruby
+helpers do
+  def talks
+    sitemap.resources.select do |resource|
+      resource.start_with?('/talks')
+    end
+  end
+end
+```
+
+Any method defined inside the `helpers` block becomes available to every page.
+
+We can now change our `source/index.html.erb` to use new the method:
+
+```erb
+<ul>
+  <%% talks.each do |talk| %>
+    <li><%%= link_to talk.data.title, talk.url %></li>
+  <%% end %>
+</ul>
+```
+
+Much nicer.
+
+## Extracting an object
+
+But can we do better? The `talk.data.title` still feels awkward. It would be much nicer if we could just use `talk.title`.
+
+Let's extract talks into their own class. For convenience, we'll continue to keep everying inside the `helpers` block inside `config.rb` for now.
+
+```ruby
+helpers do
+  class Talk
+  end
+
+  def talks
+    sitemap.resources.select do |resource|
+      resource.start_with?('/talks')
+    end
+  end
+end
+```
+
+First, we can pull the implementation of `talks` into the talk class:
+
+```ruby
+helpers do
+  class Talk
+    def self.all(resources)
+      resources.select do |resource|
+        resource.start_with?('/talks')
+      end
+    end
+  end
+
+  def talks
+    Talk.all(sitemap.resources)
+  end
+end
+```
+
+We pass in `sitemap.resources` because it allows us to decouple the `Talk` class from having to know about the `sitemap`, and make it easier to test later if we need to.
+
+We're still returning a simple filtered array of resources. Let's change that to returning an array of `Talk` instances:
+
+```ruby
+class Talk
+  def initialize(resource)
+    @resource = resource
+  end
+
+  def url
+    @resource.url
+  end
+
+  def data
+    @resource.data
+  end
+
+  def title
+    data.title
+  end 
+
+  def self.all(resources)
+    filtered_resources = resources.select do |resource|
+      resource.start_with?('/talks')
+    end
+
+    filtered_resources.map do |resource|
+      Talk.new(resource)
+    end
+  end
+end
+```
+
+We've created a [Decorator](http://en.wikipedia.org/wiki/Decorator_pattern) for the `resource` object. We've added the methods we'd like to have available – in this case, `url` and `title`, that simply delegate to the `resource` object underneath.
+
+Now we can drop the `data` method in `index.html.erb`:
+
+```erb
+<li><%%= link_to talk.title, talk.url %></li>
+```
+
+Great! But there's still a little room for refactoring.
+
+## Refactoring the Talk class
+
+In `initialize`, we're passing in an object that we're going to delegate other methods to. It turns out there's [a class in the standard library which does this for us](http://www.ruby-doc.org/stdlib-2.0.0/libdoc/delegate/rdoc/SimpleDelegator.html), so we can simplify our code:
+
+```ruby
+class Talk < SimpleDelegator
+  def title
+    data.title
+  end 
+
+  def self.all(resources)
+    filtered_resources = resources.select do |resource|
+      resource.start_with?('/talks')
+    end
+
+    filtered_resources.map do |resource|
+      Talk.new(resource)
+    end
+  end
+end
+```
+
+Any method on the `resource` object becomes available for use. We don't need to explicitly define the `url` or `data` methods any more. We can also throw away `initialize`, because `SimpleDelegator` does that for us.
+
+Finally, extract the class from the `helpers` block and move it into its own file. Move the class into a file called `lib/talk.rb`, and use `require` to load it into `config.rb`:
+
+```rb
+require './lib/talk'
+
+helpers do
+  def talks
+    Talk.all
+  end
+end
+```
+
+Much nicer.
+
+Be aware that if `talk.rb` changes, Middleman won't pick up on it by default unless you restart the server.
+
+## Building the site
+
+To build the site, run:
+
+    bundle exec middleman build
+
+The static site will be built into the `build` directory, ready to deploy anywhere.
 
 ## Links
 
