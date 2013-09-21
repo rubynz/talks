@@ -4,7 +4,7 @@ layout: talk
 author: Pete Nicholls
 venue: Christchurch Ruby
 date: 2013-09-19
-intro: Static site generation with Middleman.
+intro: Building NZ Ruby Talks with Middleman, a static site generator.
 ---
 
 [Middleman](http://middlemanapp.com) is a static site generator, similar to [Jekyll](http://jekyllrb.com) (which powers [GitHub Pages](http://pages.github.com/)) or [Stasis](http://stasis.me).
@@ -216,7 +216,7 @@ require './lib/talk'
 
 helpers do
   def talks
-    Talk.all
+    Talk.all(sitemap.resources)
   end
 end
 ```
