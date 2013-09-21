@@ -3,7 +3,7 @@ require 'forwardable'
 class Talk < SimpleDelegator
   extend Forwardable
 
-  def_delegators :data, :title, :author, :intro, :venue
+  def_delegators :data, :title, :author, :intro, :venue, :date
 
   def presented_at
     data.date.strftime('%d %h %Y')
@@ -18,8 +18,10 @@ class Talk < SimpleDelegator
       resource.url.start_with?('/talks')
     end
 
-    matching_resources.map do |resource|
+    talks = matching_resources.map do |resource|
       Talk.new(resource)
     end
+
+    talks.sort_by(&:date).reverse
   end
 end
