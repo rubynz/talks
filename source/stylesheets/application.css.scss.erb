@@ -60,6 +60,7 @@ h1 {
 
 h2 {
   font-size: 1.6em;
+  margin-bottom: 0.5em;
 }
 
 aside {
@@ -119,11 +120,23 @@ article {
   }
 }
 
-pre {
-  background: #eee;
+pre, code {
   font-family: Monaco, monospace;
+  font-size: 0.8em;
+}
+
+pre {
+  background: #f3f3f3;
   padding: 0.5em 1em;
   margin: 1em 0;
+  overflow: auto;
+}
+
+code {
+  background: #eee;
+  color: #333;
+  border-radius: 3px;
+  padding: 0.1em 0.2em;
 }
 
 .talk-overview {
