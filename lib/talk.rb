@@ -6,7 +6,7 @@ class Talk < SimpleDelegator
   def_delegators :data, :title, :author, :intro, :venue, :date
 
   def presented_at
-    data.date.strftime('%d %h %Y')
+    data.date.strftime('%-d %b %Y')
   end
 
   def timestamp
