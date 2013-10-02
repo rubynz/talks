@@ -3,7 +3,6 @@ title: Quick and Dirty Rails
 layout: talk
 author: Daniel Fone
 venue: Christchurch Ruby
-date: 2013-10-17
 upcoming: true
 intro: Putting the fun back in dysfunctional.
 ---
