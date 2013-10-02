@@ -4,8 +4,11 @@ layout: talk
 author: Daniel Fone
 venue: Christchurch Ruby
 date: 2013-10-17
-intro: "Upcoming talk: Putting the fun back in dysfunctional."
+upcoming: true
+intro: Putting the fun back in dysfunctional.
 ---
+
+*This upcoming talk will be given on October 17th at [Newbie Night](http://christchurch.ruby.org.nz/).*
 
 I remember when I was first switching from PHP to Rails, a huge appeal was how quickly you could prototype things. So…
 
