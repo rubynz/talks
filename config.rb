@@ -14,6 +14,7 @@ activate :syntax
 activate :blog do |blog|
   blog.permalink = ":year/:title.html"
   blog.sources = "talks/:year/:month-:day-:title.html"
+  blog.publish_future_dated = true
 end
 
 # Use directory indexes, for pretty URLs
