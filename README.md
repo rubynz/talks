@@ -1,7 +1,8 @@
-# NZ Ruby Talks
+# [NZ Ruby Talks](http://talks.ruby.org.nz)
 
 Talks given at NZ Ruby groups, powered by [Middleman](http://middlemanapp.com).
-You can view the talks at [talks.ruby.org.nz](http://talks.ruby.org.nz)
+
+You can view the talks at [talks.ruby.org.nz](http://talks.ruby.org.nz).
 
 ## Development environment
 
