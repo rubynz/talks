@@ -3,5 +3,8 @@
   
   <%= partial "talks/meta", locals: { talk: talk } %>
 
-  <p><%= talk.intro %></p>
+  <p>
+    <%= content_tag(:strong, "Upcoming talk:") if talk.upcoming? %>
+    <%= talk.intro %>
+  </p>
 </div>

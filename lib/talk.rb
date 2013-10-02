@@ -13,6 +13,10 @@ class Talk < SimpleDelegator
     data.date.iso8601
   end
 
+  def upcoming?
+    data.upcoming
+  end
+
   def self.all(resources)
     matching_resources = resources.select do |resource|
       resource.url.start_with?('/talks')
