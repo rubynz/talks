@@ -3,14 +3,14 @@ require 'forwardable'
 class Talk < SimpleDelegator
   extend Forwardable
 
-  def_delegators :data, :title, :author, :intro, :venue, :date
+  def_delegators :data, :title, :author, :intro, :venue
 
   def presented_at
-    data.date.strftime('%-d %b %Y')
+    date.strftime('%-d %b %Y')
   end
 
   def timestamp
-    data.date.iso8601
+    date.iso8601
   end
 
   def upcoming?
@@ -19,7 +19,7 @@ class Talk < SimpleDelegator
 
   def self.all(resources)
     matching_resources = resources.select do |resource|
-      resource.url.start_with?('/talks')
+      resource.path.start_with?('talks')
     end
 
     talks = matching_resources.map do |resource|

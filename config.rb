@@ -6,13 +6,18 @@ set :css_dir, 'stylesheets'
 set :js_dir, 'javascripts'
 set :images_dir, 'images'
 
-# Use directory indexes, for pretty URLs
-activate :directory_indexes
-
 set :markdown_engine, :redcarpet
 set :markdown, fenced_code_blocks: true, smartypants: true, autolink: true
 
 activate :syntax
+
+activate :blog do |blog|
+  blog.permalink = ":year/:title.html"
+  blog.sources = "talks/:year/:month-:day-:title.html"
+end
+
+# Use directory indexes, for pretty URLs
+activate :directory_indexes
 
 helpers do
 
