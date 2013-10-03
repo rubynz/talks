@@ -2,6 +2,10 @@
 title: All talks
 ---
 
-<% talks.each do |talk| %>
-  <%= partial "talks/overview", locals: { talk: talk } %>
+<% talks.group_by(&:date).each do |date, talkies| %>
+  <h1><%= date.strftime('%-d %b %Y') %></h1>
+  <hr>
+  <% talkies.each do |talk| %>
+    <%= partial "talks/overview", locals: { talk: talk } %>
+  <% end %>
 <% end %>
