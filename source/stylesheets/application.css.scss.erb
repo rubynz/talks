@@ -4,6 +4,7 @@ $article-width: 600px;
 $aside-width: 200px;
 $gutter: 80px;
 $ruby-red: #CA1D00;
+$light-grey: #eee;
 
 body {
   background: white;
@@ -43,7 +44,7 @@ a {
 }
 
 blockquote {
-  border-left: 4px solid #eee;
+  border-left: 4px solid $light-grey;
   color: #777;
   margin: 1em 0;
   padding: 0 1em;
@@ -77,6 +78,13 @@ h2 {
   margin-bottom: 0.5em;
 }
 
+hr {
+  color: $light-grey;
+  background-color: $light-grey;
+  height: 0.2em;
+  border: 0;
+}
+
 aside {
   font-weight: 600;
   font-family: "freight-sans-pro", sans-serif;
@@ -107,7 +115,7 @@ aside {
       clear: left;
       margin: 0.5em;
       color:  #CA1D00;
-      border-bottom: 2px solid #eee;
+      border-bottom: 2px solid $light-grey;
     }
   }
 }
@@ -147,7 +155,7 @@ pre {
 }
 
 code {
-  background: #eee;
+  background: $light-grey;
   color: #333;
   border-radius: 3px;
   padding: 0.1em 0.2em;
