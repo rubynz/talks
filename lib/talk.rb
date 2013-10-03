@@ -14,7 +14,7 @@ class Talk < SimpleDelegator
   end
 
   def upcoming?
-    data.upcoming
+    date > Time.now
   end
 
   def self.all(resources)
