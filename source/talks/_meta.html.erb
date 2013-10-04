@@ -1,7 +1,15 @@
 <div class="meta">
-  by <span class="author"><%= talk.author %></span>
-  on <time datetime="<%= talk.timestamp %>">
+  <span class="by">
+    by <span class="author"><%= talk.author %></span>
+  </span>
+
+  <span class="on">
+    on <time datetime="<%= talk.timestamp %>">
       <%= talk.presented_at %>
-     </time>
-  at <span class="venue"><%= talk.venue %></span>
+     </time>  
+  </span>
+  
+  <span class="at">
+    at <span class="venue"><%= talk.venue %></span>  
+  </span>
 </div>
