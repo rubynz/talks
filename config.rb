@@ -1,5 +1,7 @@
 require './lib/talk'
 
+Time.zone = 'Pacific/Auckland'
+
 set :project_name, "NZ Ruby Talks"
 
 set :css_dir, 'stylesheets'
@@ -32,6 +34,12 @@ helpers do
 
   def current_talk
     Talk.new(current_page)
+  end
+
+  def upcoming(&block)
+    content = capture(&block)
+    tag = content_tag(:div, content, class: 'upcoming')
+    concat tag
   end
 
 end
