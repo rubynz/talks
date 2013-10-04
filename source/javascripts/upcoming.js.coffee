@@ -4,15 +4,12 @@
 $(document).ready ->
   upcoming = $('.upcoming')
 
-  presentedDateOf = (element) ->
-    timeElement = element.siblings('.meta').find('time')
-    dateString = timeElement.attr('datetime')
-    moment(dateString).toDate()
-
   upcoming.each ->
     element = $(this)
+    dateString = element.data('datetime')
+
     today = moment().startOf('day').toDate()
-    presentedAt = presentedDateOf(element)
+    presentedAt = moment(dateString).toDate()
 
     element.toggle(today < presentedAt)
     

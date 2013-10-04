@@ -36,9 +36,11 @@ helpers do
     Talk.new(current_page)
   end
 
-  def upcoming(&block)
+  def upcoming(date = nil, &block)
+    date ||= current_talk.date
     content = capture(&block)
-    tag = content_tag(:div, content, class: 'upcoming')
+    tag = content_tag(:div, content, class: 'upcoming',
+                                     data: { datetime: date.iso8601 })
     concat tag
   end
 
