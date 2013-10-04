@@ -1,5 +1,7 @@
 require './lib/talk'
 
+Time.zone = 'Pacific/Auckland'
+
 set :project_name, "NZ Ruby Talks"
 
 set :css_dir, 'stylesheets'
