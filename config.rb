@@ -36,6 +36,12 @@ helpers do
     Talk.new(current_page)
   end
 
+  def upcoming(&block)
+    content = capture(&block)
+    tag = content_tag(:div, content, class: 'upcoming')
+    concat tag
+  end
+
 end
 
 configure :build do
