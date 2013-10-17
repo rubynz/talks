@@ -6,7 +6,7 @@ venue: Christchurch Ruby
 intro: An introduction to a deployment platform commonly used for Rails apps..
 ---
 
-*This upcoming talk was given on October 17th at [Newbie Night](http://christchurch.ruby.org.nz/).*
+*This talk was given on October 17th at [Newbie Night](http://christchurch.ruby.org.nz/).*
 
 *The code for the example app used during the demo, and all instructions to deploy an app to heroku can be found [here](http://devcenter.heroku.com/articles/queuing-ruby-resque).*
 
