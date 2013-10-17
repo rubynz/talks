@@ -4,7 +4,10 @@
   <%= partial "talks/meta", locals: { talk: talk } %>
 
   <p>
-    <%= content_tag(:strong, "Upcoming talk:") if talk.upcoming? %>
+    <% upcoming talk.date do %>
+      <strong>Upcoming talk:</strong>
+    <% end %>
+    
     <%= talk.intro %>
   </p>
 </div>
