@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Understanding Enumerable – NZ Ruby Talks</title>
+    <link href="/stylesheets/application-485806bd.css" media="screen" rel="stylesheet" type="text/css" />
+
+    <script type="text/javascript" src="//use.typekit.net/lpd5kis.js"></script>
+    <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+  </head>
+  <body>
+
+    <aside>
+      <a href="/" class="logo">
+        <img alt="NZ Ruby Talks" width="180" height="180" src="/images/logo-1be683a4.png" />
+        NZ Ruby Talks
+      </a>
+
+      <nav>
+        <a href="/">Talks</a>
+        <a href="https://github.com/nzruby/talks">Add your talk</a>
+        <a href="http://ruby.org.nz/">About NZ Ruby</a>
+      </nav>
+    </aside>
+
+    <article>
+      
+  <div class="talk">
+    <h1>Understanding Enumerable</h1>
+
+    <div class="meta">
+  <span class="by">
+    by <span class="author">Pete Nicholls</span>
+  </span>
+
+  <span class="on">
+    on <time datetime="2013-10-17T00:00:00+13:00">
+      17 Oct 2013
+     </time>  
+  </span>
+  
+  <span class="at">
+    at <span class="venue">Christchurch Ruby</span>  
+  </span>
+</div>
+
+    <p><em>This article is a work-in-progress. The first section is aimed at newcomers to Ruby, so feel free to skip it if you already know it.</em></p>
+
+<p><a href="http://ruby-doc.org/core-2.0.0/Enumerable.html">Enumerable</a> is a fascinating mixin. Its use makes for unusual, characteristic, and expressive Ruby code. In this talk, we&#39;ll take a look at Ruby&#39;s array class, discuss why Rubyists don&#39;t use <code>for</code>, and learn how to count the uncountable.</p>
+
+<h2>Forming arrays</h2>
+
+<p>When I first starting writing Ruby, I remember being impressed with the breadth and expressiveness of the standard library.</p>
+
+<p>Let&#39;s look at a few array examples. To try any of these examples, you can follow along using the interactive console that ships with Ruby, <code>irb</code>. Type <code>irb</code> in a terminal and hit return to open an interactive Ruby session.</p>
+
+<p>Let&#39;s start by creating an array:</p>
+<pre class="highlight ruby"><span class="n">parents</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&quot;Ned&quot;</span><span class="p">,</span> <span class="s2">&quot;Catelyn&quot;</span><span class="o">]</span>
+<span class="c1"># =&gt; [&quot;Ned&quot;, &quot;Catelyn&quot;]</span>
+</pre>
+<p>Nothing out of the ordinary here, but there&#39;s a simpler way to write arrays of whitespace-separated values:</p>
+<pre class="highlight ruby"><span class="n">children</span> <span class="o">=</span> <span class="sx">%w( Robb Sansa Arya Bran Rickon )</span>
+<span class="c1"># =&gt; [&quot;Robb&quot;, &quot;Sansa&quot;, &quot;Arya&quot;, &quot;Bran&quot;, &quot;Rickon&quot;]</span>
+</pre>
+<p>Now, let&#39;s combine the two arrays together:</p>
+<pre class="highlight ruby"><span class="n">starks</span> <span class="o">=</span> <span class="n">parents</span> <span class="o">+</span> <span class="n">children</span>
+<span class="c1"># =&gt; [&quot;Ned&quot;, &quot;Catelyn&quot;, &quot;Robb&quot;, &quot;Sansa&quot;, &quot;Arya&quot;, &quot;Bran&quot;, &quot;Rickon&quot;]</span>
+</pre>
+<p>Seems natural, right? Subtraction works too:</p>
+<pre class="highlight ruby"><span class="n">starks</span> <span class="o">-</span> <span class="n">children</span>
+<span class="c1"># =&gt; [&quot;Ned&quot;, &quot;Catelyn&quot;]</span>
+</pre>
+<p>Accessing items:</p>
+<pre class="highlight ruby"><span class="n">starks</span><span class="nf">.first</span> <span class="c1"># =&gt; &quot;Ned&quot;</span>
+<span class="n">starks</span><span class="nf">.at</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="c1"># =&gt; &quot;Sansa&quot;</span>
+<span class="n">starks</span><span class="o">[-</span><span class="mi">1</span><span class="o">]</span> <span class="c1"># =&gt; &quot;Rickon&quot;</span>
+<span class="n">starks</span><span class="o">[</span><span class="mi">3</span><span class="nf">..</span><span class="mi">5</span><span class="o">]</span> <span class="c1"># =&gt; [&quot;Sansa&quot;, &quot;Arya&quot;, &quot;Bran&quot;]</span>
+</pre>
+<p>In the last example, <code>3..5</code> is a <code>Range</code>. We&#39;ll come back to those later.</p>
+
+<h2>Array iteration</h2>
+
+<p>Ruby has a <code>for</code> loop:</p>
+<pre class="highlight ruby"><span class="k">for</span> <span class="nb">name</span> <span class="k">in</span> <span class="n">starks</span>
+  <span class="nb">puts</span> <span class="nb">name</span>
+<span class="k">end</span>
+</pre>
+<p>You won&#39;t often see it used, though. Instead, most Rubyists will use <code>each</code>:</p>
+<pre class="highlight ruby"><span class="n">starks</span><span class="nf">.each</span> <span class="k">do</span> <span class="o">|</span><span class="nb">name</span><span class="o">|</span>
+  <span class="nb">puts</span> <span class="nb">name</span>
+<span class="k">end</span>
+</pre>
+<p>There&#39;s an important distinction, and we&#39;ll come back to it later. For the moment, just take a look at this example.</p>
+
+<p>Between the <code>do</code> and <code>end</code> we have a block. You can think of a block as an anonymous function or a closure, if you&#39;re familiar with those concepts. Otherwise, just think of it as a “block” of code.</p>
+
+<p>The block gets executed once per item in the array.</p>
+
+<p>Another way to write a block is with curly braces. The following is identical to the last example:</p>
+<pre class="highlight ruby"><span class="n">starks</span><span class="nf">.each</span> <span class="p">{</span> <span class="o">|</span><span class="nb">name</span><span class="o">|</span> <span class="nb">puts</span> <span class="nb">name</span> <span class="p">}</span>
+</pre>
+<p>What if we wanted the index, too?</p>
+<pre class="highlight ruby"><span class="n">starks</span><span class="nf">.each_with_index</span> <span class="p">{</span> <span class="o">|</span><span class="nb">name</span><span class="p">,</span> <span class="n">i</span><span class="o">|</span> <span class="nb">puts</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">i</span><span class="si">}</span><span class="s2">. </span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">&quot;</span> <span class="p">}</span>
+</pre>
+<p>Which would print:</p>
+<pre class="highlight text">1. Ned
+2. Catelyn
+3. Robb
+...
+</pre>
+<h2>Filtering and sorting arrays</h2>
+
+<p>Many of the methods on arrays use blocks.</p>
+
+<p>Let&#39;s try filtering an array:</p>
+<pre class="highlight ruby"><span class="n">starks</span><span class="nf">.select</span> <span class="p">{</span> <span class="o">|</span><span class="nb">name</span><span class="o">|</span> <span class="nb">name</span><span class="nf">.end_with?</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="p">}</span>
+<span class="c1"># =&gt; [&quot;Sansa&quot;, &quot;Arya&quot;]</span>
+</pre>
+<p>When using <code>select</code>, the <em>return value</em> of the block will be evaluated to determine which elements are returned in the new array. In Ruby, all methods and blocks have a return value, in this case the last line of the block.</p>
+
+<p>Similar to <code>select</code>, we have <code>reject</code>:</p>
+<pre class="highlight ruby"><span class="n">starks</span><span class="nf">.reject</span> <span class="p">{</span> <span class="o">|</span><span class="nb">name</span><span class="o">|</span> <span class="nb">name</span><span class="nf">.include?</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="p">}</span>
+<span class="c1"># =&gt; [&quot;Ned&quot;, &quot;Robb&quot;, &quot;Rickon&quot;]</span>
+</pre>
+<p><code>sort</code> is available:</p>
+<pre class="highlight ruby"><span class="n">starks</span><span class="nf">.sort</span>
+<span class="c1"># =&gt; [&quot;Arya&quot;, &quot;Bran&quot;, &quot;Catelyn&quot;, &quot;Ned&quot;, &quot;Rickon&quot;, &quot;Robb&quot;, &quot;Sansa&quot;]</span>
+</pre>
+<p>Because most methods on array return another array, you can chain methods together:</p>
+<pre class="highlight ruby"><span class="n">starks</span><span class="nf">.sort.reverse</span>
+<span class="o">=&gt;</span> <span class="o">[</span><span class="s2">&quot;Sansa&quot;</span><span class="p">,</span> <span class="s2">&quot;Robb&quot;</span><span class="p">,</span> <span class="s2">&quot;Rickon&quot;</span><span class="p">,</span> <span class="s2">&quot;Ned&quot;</span><span class="p">,</span> <span class="s2">&quot;Catelyn&quot;</span><span class="p">,</span> <span class="s2">&quot;Bran&quot;</span><span class="p">,</span> <span class="s2">&quot;Arya&quot;</span><span class="o">]</span>
+</pre>
+<p>Here, we&#39;re using a block sorting by the length of their name:</p>
+<pre class="highlight ruby"><span class="n">starks</span><span class="nf">.sort_by</span> <span class="p">{</span> <span class="o">|</span><span class="nb">name</span><span class="o">|</span> <span class="nb">name</span><span class="nf">.length</span> <span class="p">}</span>
+<span class="c1"># =&gt; =&gt; [&quot;Sansa&quot;, &quot;Arya&quot;, &quot;Robb&quot;, &quot;Ned&quot;, &quot;Catelyn&quot;, &quot;Bran&quot;, &quot;Rickon&quot;]</span>
+</pre>
+<p>If you want to call a single method on each item, there&#39;s a shorthand syntax for that:</p>
+<pre class="highlight ruby"><span class="n">starks</span><span class="nf">.sort_by</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:length</span><span class="p">)</span>
+</pre>
+<p>I won&#39;t discuss how this works, but it&#39;s pretty neat if you want to <a href="http://phrogz.net/symbol-to-proc-with-multiple-arguments">find out for yourself</a>.</p>
+
+<h2>Transforming arrays</h2>
+
+<p>What if we wanted to transform all the names?</p>
+<pre class="highlight ruby"><span class="n">starks</span><span class="nf">.map</span> <span class="p">{</span> <span class="o">|</span><span class="n">stark</span><span class="o">|</span> <span class="n">stark</span><span class="nf">.upcase</span> <span class="p">}</span>
+<span class="c1"># =&gt; [&quot;NED&quot;, &quot;CATELYN&quot;, &quot;ROBB&quot;, &quot;SANSA&quot;, &quot;ARYA&quot;, &quot;BRAN&quot;, &quot;RICKON&quot;]</span>
+</pre>
+<p>Let&#39;s add the last name to each member of the Stark house. This time, we&#39;re going to use <code>map</code>&#39;s brother, <code>map!</code>:</p>
+<pre class="highlight ruby"><span class="n">starks</span><span class="nf">.map!</span> <span class="p">{</span> <span class="o">|</span><span class="n">first_name</span><span class="o">|</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">first_name</span><span class="si">}</span><span class="s2"> Stark&quot;</span> <span class="p">}</span>
+<span class="c1"># =&gt; =&gt; [&quot;Ned Stark&quot;, &quot;Catelyn Stark&quot;, &quot;Robb Stark&quot;, &quot;Sansa Stark&quot;, &quot;Arya Stark&quot;, &quot;Bran Stark&quot;, &quot;Rickon Stark&quot;]</span>
+</pre>
+<p>The difference between <code>map</code> and <code>map!</code> is that <code>map</code> will return a <em>new</em> array, while <code>map!</code> will modify the existing array.</p>
+
+<p>In the same way, <code>select</code> and <code>reject</code> have <code>select!</code> and <code>reject!</code> counterparts that modify the original array rather than retuen a new one.</p>
+
+<p><strong>Ruby Tip:</strong> The exclamation mark (also known as the <em>bang</em>), is a perfectly valid character to use as part of a method name. Rubyists tend to use exclamation marks at the end of their methods to let other developers know that the method is dangerous. It might be making permanent changes to your object, database, or doing something unexpected.</p>
+
+<h2>Searching for answers</h2>
+
+<p>Now that we have all our Starks properly named, let&#39;s add one more:</p>
+<pre class="highlight ruby"><span class="n">starks</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;Jon Snow&quot;</span>
+<span class="o">=&gt;</span> <span class="o">[</span><span class="s2">&quot;Ned Stark&quot;</span><span class="p">,</span> <span class="s2">&quot;Catelyn Stark&quot;</span><span class="p">,</span> <span class="s2">&quot;Robb Stark&quot;</span><span class="p">,</span> <span class="s2">&quot;Sansa Stark&quot;</span><span class="p">,</span> <span class="s2">&quot;Arya Stark&quot;</span><span class="p">,</span> <span class="s2">&quot;Bran Stark&quot;</span><span class="p">,</span> <span class="s2">&quot;Rickon Stark&quot;</span><span class="p">,</span> <span class="s2">&quot;Jon Snow&quot;</span><span class="o">]</span>
+</pre>
+<p>How would we know if this array contained someone whose last name was Snow? We could use <code>select</code>, but it would have to iterate through every item in the array, even if it had already found a Snow. Wouldn&#39;t it be better if we had a method that returned <code>true</code> the moment it found one?</p>
+<pre class="highlight ruby"><span class="n">starks</span><span class="nf">.any?</span> <span class="p">{</span> <span class="o">|</span><span class="nb">name</span><span class="o">|</span> <span class="nb">name</span><span class="nf">.ends_with?</span><span class="p">(</span><span class="s1">&#39;Snow&#39;</span><span class="p">)</span> <span class="p">}</span>
+<span class="c1"># =&gt; true</span>
+</pre>
+<p>The question mark in the <code>any?</code> method is similar to the exclamation mark before – it&#39;s simply a Ruby convention, this time to indicate a method that returns a true (or <a href="https://gist.github.com/jfarmer/2647362">truthy</a>) value.</p>
+<pre class="highlight ruby"><span class="n">starks</span><span class="nf">.all?</span> <span class="p">{</span> <span class="o">|</span><span class="nb">name</span><span class="o">|</span> <span class="nb">name</span><span class="nf">.ends_with?</span><span class="p">(</span><span class="s1">&#39;Stark&#39;</span><span class="p">)</span> <span class="p">}</span>
+<span class="c1"># =&gt; false</span>
+
+<span class="n">starks</span><span class="nf">.delete</span><span class="p">(</span><span class="s1">&#39;John Snow&#39;</span><span class="p">)</span>
+<span class="n">starks</span><span class="nf">.all?</span> <span class="p">{</span> <span class="o">|</span><span class="nb">name</span><span class="o">|</span> <span class="nb">name</span><span class="nf">.ends_with?</span><span class="p">(</span><span class="s1">&#39;Stark&#39;</span><span class="p">)</span> <span class="p">}</span>
+<span class="c1"># =&gt; true</span>
+</pre>
+<h2>Range iteration</h2>
+
+<p>Now you&#39;ve seen a few tricks from the Array class, let&#39;s take a look at another common class, Range:</p>
+<pre class="highlight ruby"><span class="p">(</span><span class="mi">0</span><span class="nf">..</span><span class="mi">5</span><span class="p">)</span><span class="nf">.each</span> <span class="p">{</span> <span class="o">|</span><span class="n">n</span><span class="o">|</span> <span class="nb">puts</span> <span class="n">n</span> <span class="p">}</span>
+</pre>
+<p>Notice how we&#39;re using <code>each</code> again. Here&#39;s a method that allows us to iterate over the range in slices:</p>
+<pre class="highlight ruby"><span class="p">(</span><span class="mi">1</span><span class="nf">..</span><span class="mi">100</span><span class="p">)</span><span class="nf">.each_slice</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">set</span><span class="o">|</span> <span class="nb">puts</span> <span class="n">set</span><span class="nf">.inspect</span> <span class="p">}</span>
+</pre>
+<p>Which would produce:</p>
+<pre class="highlight text">[1, 2, 3, 4, 5]
+[6, 7, 8, 9, 10]
+...snip...
+[96, 97, 98, 99, 100]
+</pre>
+<h2>Counting to Infinity</h2>
+
+<p>In most languages, dividing by zero raises an error:</p>
+<pre class="highlight text">&gt;&gt;&gt; 1.0/0
+Traceback (most recent call last):
+  File &quot;&lt;string&gt;&quot;, line 1, in &lt;module&gt;
+ZeroDivisionError: float division by zero
+</pre>
+<p>Not so in Ruby:</p>
+<pre class="highlight ruby"><span class="no">Infinity</span> <span class="o">=</span> <span class="mi">1</span><span class="o">.</span><span class="mi">0</span><span class="o">/</span><span class="mi">0</span>
+<span class="c1"># =&gt; Infinity</span>
+</pre>
+<p>Interestingly, you can create a Range that uses Infinity:</p>
+<pre class="highlight ruby"><span class="n">all_positive_numbers</span> <span class="o">=</span> <span class="mi">0</span><span class="nf">..</span><span class="no">Infinity</span>
+<span class="n">all_positive_numbers</span><span class="nf">.include?</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="c1"># =&gt; true</span>
+<span class="n">all_positive_numbers</span><span class="nf">.include?</span><span class="p">(</span><span class="mi">41343124</span><span class="p">)</span> <span class="c1"># =&gt; true</span>
+<span class="n">us_debt</span> <span class="o">=</span> <span class="mi">17_000_000_000_000</span>
+<span class="n">all_positive_numbers</span><span class="nf">.include?</span><span class="p">(</span><span class="n">us_debt</span><span class="p">)</span> <span class="c1"># =&gt; true</span>
+</pre>
+<p>You can even create a range between negative and positive Infinity:</p>
+<pre class="highlight ruby"><span class="n">all_numbers</span> <span class="o">=</span> <span class="o">-</span><span class="no">Infinity</span><span class="nf">..</span><span class="no">Infinity</span>
+<span class="n">all_numbers</span><span class="nf">.include?</span><span class="p">(</span><span class="o">-</span><span class="mi">35623</span><span class="p">)</span> <span class="c1"># =&gt; true</span>
+</pre>
+<p>You could, if you wanted to, use <code>each</code> to iterate over every postive number. It may take some time:</p>
+<pre class="highlight ruby"><span class="n">all_positive_numbers</span><span class="nf">.each</span> <span class="p">{</span> <span class="o">|</span><span class="n">n</span><span class="o">|</span> <span class="nb">puts</span> <span class="n">n</span> <span class="p">}</span>
+</pre>
+<p>Better, though to perhaps take a few:</p>
+<pre class="highlight ruby"><span class="n">all_positive_numbers</span><span class="nf">.take</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="c1"># =&gt; =&gt; [0, 1, 2, 3, 4]</span>
+</pre>
+<p>Or perhaps in slices:</p>
+<pre class="highlight ruby"> <span class="n">all_positive_numbers</span><span class="nf">.each_slice</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="nf">.take</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="o">=&gt;</span> <span class="o">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="o">]</span><span class="p">,</span> <span class="o">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="o">]]</span>
+</pre>
+<p>Notice how we didn&#39;t pass a block to <code>each_slice</code> this time? I wonder what happens if we just call <code>each</code> by itself?</p>
+<pre class="highlight ruby"><span class="n">enumerator</span> <span class="o">=</span> <span class="n">all_positive_numbers</span><span class="nf">.each</span>
+<span class="c1"># =&gt; #&lt;Enumerator: 0..Infinity:each&gt;</span>
+
+<span class="n">enumerator</span><span class="nf">.next</span> <span class="c1"># =&gt; 0</span>
+<span class="n">enumerator</span><span class="nf">.next</span> <span class="c1"># =&gt; 1</span>
+<span class="n">enumerator</span><span class="nf">.next</span> <span class="c1"># =&gt; 2</span>
+</pre>
+<p>Interesting.</p>
+
+<h2>Hashes</h2>
+
+<p>Hashes allow table-like mappings between names and values:</p>
+<pre class="highlight ruby"><span class="n">sigils</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">&#39;Stark&#39;</span>     <span class="o">=&gt;</span> <span class="s1">&#39;Direwolf&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;Lannister&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Lion&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;Greyjoy&#39;</span>   <span class="o">=&gt;</span> <span class="s1">&#39;Kraken&#39;</span>
+<span class="p">}</span>
+</pre>
+<p>Hashes, too, have an <code>each</code> method:</p>
+<pre class="highlight ruby"><span class="n">sigils</span><span class="nf">.each</span> <span class="k">do</span> <span class="o">|</span><span class="n">house</span><span class="p">,</span> <span class="n">animal</span><span class="o">|</span>
+  <span class="nb">puts</span> <span class="s2">&quot;The sigil of House </span><span class="si">#{</span><span class="n">house</span><span class="si">}</span><span class="s2"> is a </span><span class="si">#{</span><span class="n">animal</span><span class="si">}</span><span class="s2">.&quot;</span>
+<span class="k">end</span>
+</pre>
+<p>Let&#39;s have a look at the methods on a Hash:</p>
+<pre class="highlight ruby"><span class="no">Hash</span><span class="nf">.instance_methods</span>
+<span class="c1"># =&gt; [..., :each, :map, :select, :reject, :all?, :any?, ...]</span>
+</pre>
+<p>Hmm, these are the same methods that appear on the <code>Array</code> and <code>Range</code> classes.</p>
+
+<h2>Introducing Enumerable</h2>
+
+<p><code>Array</code>, <code>Range</code>, and <code>Hash</code> share a number of identical (and useful) methods. How is this happening?</p>
+
+<p>The answer that each of these classes include the Enumerable module. With a module, you can define a number of methods. Other classes can include that module to borrow its methods.</p>
+
+<p>You can mix in Enumerable to any class which implements the <code>each</code> method. In other words, all the methods you&#39;ve seen so far (<code>select</code>, <code>each_with_index</code>, <code>all?</code>, <code>map</code>, etc.) have been written purely in terms of <code>each</code>.</p>
+
+<p><em>This article is a work in progress. Still to come: writing your own class that implements <code>each</code>.</em></p>
+
+  </div>
+
+
+    </article>
+
+    <script src="/javascripts/upcoming-e8099929.js" type="text/javascript"></script>
+    <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44220139-1', 'ruby.org.nz');
+  ga('send', 'pageview');
+
+</script>
+  </body>
+</html>
