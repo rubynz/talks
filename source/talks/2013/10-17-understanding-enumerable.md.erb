@@ -8,13 +8,13 @@ intro: What's it like to write Ruby? Learn how to write idiomatic Ruby with one 
 
 *This article is a work-in-progress. The first section is aimed at newcomers to Ruby, so feel free to skip it if you already know it.*
 
-[Enumerable](http://ruby-doc.org/core-2.0.0/Enumerable.html) is a fascinating mixin. Its use makes for unusual, characteristic, and expressive Ruby code. In this talk, we'll take a look at Ruby's array class, discuss why Rubyists don't use `for`, and learn how to count the uncountable.
+[Enumerable](http://ruby-doc.org/core-2.0.0/Enumerable.html) is a fascinating mixin. Its use makes for unusual, characteristic, and expressive Ruby code. In this talk, we'll take a look at Ruby's `Array` class, discuss why Rubyists don't use `for`, and learn how to count the uncountable.
 
 ## Forming arrays
 
-When I first starting writing Ruby, I remember being impressed with the breadth and expressiveness of the standard library.
+When I first starting writing Ruby, I remember being impressed with the breadth and expressiveness of the standard library. Perhaps none stood out to me more than the `Array` class. 
 
-Let's look at a few array examples. To try any of these examples, you can follow along using the interactive console that ships with Ruby, `irb`. Type `irb` in a terminal and hit return to open an interactive Ruby session.
+Let's look at a few examples. You can try any of these examples using the interactive console that ships with Ruby, `irb`. Just type `irb` in a terminal and hit return to start an interactive Ruby session.
 
 Let's start by creating an array:
 
@@ -200,7 +200,7 @@ starks.all? { |name| name.ends_with?('Stark') }
 
 ## Range iteration
 
-Now you've seen a few tricks from the Array class, let's take a look at another common class, Range:
+Now you've seen a few tricks from the `Array` class, let's take a look at another common class, `Range`:
 
 ```ruby
 (0..5).each { |n| puts n }
@@ -239,7 +239,7 @@ Infinity = 1.0/0
 # => Infinity
 ```
 
-Interestingly, you can create a Range that uses Infinity:
+Interestingly, you can create a range that uses Infinity:
 
 ```ruby
 all_positive_numbers = 0..Infinity
