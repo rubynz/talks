@@ -1,0 +1,329 @@
+---
+title: Understanding Enumerable
+layout: talk
+author: Pete Nicholls
+venue: Christchurch Ruby
+intro: What's it like to write Ruby? Learn how to write idiomatic Ruby with one of Ruby's most-celebrated mixins.
+---
+
+*This article is a work-in-progress. The first section is aimed at newcomers to Ruby, so feel free to skip it if you already know it.*
+
+[Enumerable](http://ruby-doc.org/core-2.0.0/Enumerable.html) is a fascinating mixin. Its use makes for unusual, characteristic, and expressive Ruby code. In this talk, we'll take a look at Ruby's array class, discuss why Rubyists don't use `for`, and learn how to count the uncountable.
+
+## Forming arrays
+
+When I first starting writing Ruby, I remember being impressed with the breadth and expressiveness of the standard library.
+
+Let's look at a few array examples. To try any of these examples, you can follow along using the interactive console that ships with Ruby, `irb`. Type `irb` in a terminal and hit return to open an interactive Ruby session.
+
+Let's start by creating an array:
+
+```ruby
+parents = ["Ned", "Catelyn"]
+# => ["Ned", "Catelyn"]
+```
+
+Nothing out of the ordinary here, but there's a simpler way to write arrays of whitespace-separated values:
+
+```ruby
+children = %w( Robb Sansa Arya Bran Rickon )
+# => ["Robb", "Sansa", "Arya", "Bran", "Rickon"]
+```
+
+Now, let's combine the two arrays together:
+
+```ruby
+starks = parents + children
+# => ["Ned", "Catelyn", "Robb", "Sansa", "Arya", "Bran", "Rickon"]
+```
+
+Seems natural, right? Subtraction works too:
+
+```ruby
+starks - children
+# => ["Ned", "Catelyn"]
+```
+
+Accessing items:
+
+```ruby
+starks.first # => "Ned"
+starks.at(3) # => "Sansa"
+starks[-1] # => "Rickon"
+starks[3..5] # => ["Sansa", "Arya", "Bran"]
+```
+
+In the last example, `3..5` is a `Range`. We'll come back to those later.
+
+## Array iteration
+
+Ruby has a `for` loop:
+
+```ruby
+for name in starks
+  puts name
+end
+```
+
+You won't often see it used, though. Instead, most Rubyists will use `each`:
+
+```ruby
+starks.each do |name|
+  puts name
+end
+```
+
+There's an important distinction, and we'll come back to it later. For the moment, just take a look at this example.
+
+Between the `do` and `end` we have a block. You can think of a block as an anonymous function or a closure, if you're familiar with those concepts. Otherwise, just think of it as a “block” of code.
+
+The block gets executed once per item in the array.
+
+Another way to write a block is with curly braces. The following is identical to the last example:
+
+```ruby
+starks.each { |name| puts name }
+```
+
+What if we wanted the index, too?
+
+```ruby
+starks.each_with_index { |name, i| puts "#{i}. #{name}" }
+```
+
+Which would print:
+
+```
+1. Ned
+2. Catelyn
+3. Robb
+...
+```
+
+## Filtering and sorting arrays
+
+Many of the methods on arrays use blocks.
+
+Let's try filtering an array:
+
+```ruby
+starks.select { |name| name.end_with?('a') }
+# => ["Sansa", "Arya"]
+```
+
+When using `select`, the *return value* of the block will be evaluated to determine which elements are returned in the new array. In Ruby, all methods and blocks have a return value, in this case the last line of the block.
+
+Similar to `select`, we have `reject`:
+
+```ruby
+starks.reject { |name| name.include?('a') }
+# => ["Ned", "Robb", "Rickon"]
+```
+
+`sort` is available:
+
+```ruby
+starks.sort
+# => ["Arya", "Bran", "Catelyn", "Ned", "Rickon", "Robb", "Sansa"]
+```
+
+Because most methods on array return another array, you can chain methods together:
+
+```ruby
+starks.sort.reverse
+=> ["Sansa", "Robb", "Rickon", "Ned", "Catelyn", "Bran", "Arya"]
+```
+
+Here, we're using a block sorting by the length of their name:
+
+```ruby
+starks.sort_by { |name| name.length }
+# => => ["Sansa", "Arya", "Robb", "Ned", "Catelyn", "Bran", "Rickon"]
+```
+
+If you want to call a single method on each item, there's a shorthand syntax for that:
+
+```ruby
+starks.sort_by(&:length)
+```
+
+I won't discuss how this works, but it's pretty neat if you want to [find out for yourself](http://phrogz.net/symbol-to-proc-with-multiple-arguments).
+
+## Transforming arrays
+
+What if we wanted to transform all the names?
+
+```ruby
+starks.map { |stark| stark.upcase }
+# => ["NED", "CATELYN", "ROBB", "SANSA", "ARYA", "BRAN", "RICKON"]
+```
+
+Let's add the last name to each member of the Stark house. This time, we're going to use `map`'s brother, `map!`:
+
+```ruby
+starks.map! { |first_name| "#{first_name} Stark" }
+# => => ["Ned Stark", "Catelyn Stark", "Robb Stark", "Sansa Stark", "Arya Stark", "Bran Stark", "Rickon Stark"]
+```
+
+The difference between `map` and `map!` is that `map` will return a *new* array, while `map!` will modify the existing array.
+
+In the same way, `select` and `reject` have `select!` and `reject!` counterparts that modify the original array rather than retuen a new one.
+
+**Ruby Tip:** The exclamation mark (also known as the *bang*), is a perfectly valid character to use as part of a method name. Rubyists tend to use exclamation marks at the end of their methods to let other developers know that the method is dangerous. It might be making permanent changes to your object, database, or doing something unexpected.
+
+## Searching for answers
+
+Now that we have all our Starks properly named, let's add one more:
+
+```ruby
+starks << "Jon Snow"
+=> ["Ned Stark", "Catelyn Stark", "Robb Stark", "Sansa Stark", "Arya Stark", "Bran Stark", "Rickon Stark", "Jon Snow"]
+```
+
+How would we know if this array contained someone whose last name was Snow? We could use `select`, but it would have to iterate through every item in the array, even if it had already found a Snow. Wouldn't it be better if we had a method that returned `true` the moment it found one?
+
+```ruby
+starks.any? { |name| name.ends_with?('Snow') }
+# => true
+```
+
+The question mark in the `any?` method is similar to the exclamation mark before – it's simply a Ruby convention, this time to indicate a method that returns a true (or [truthy](https://gist.github.com/jfarmer/2647362)) value.
+
+```ruby
+starks.all? { |name| name.ends_with?('Stark') }
+# => false
+
+starks.delete('John Snow')
+starks.all? { |name| name.ends_with?('Stark') }
+# => true
+```
+
+## Range iteration
+
+Now you've seen a few tricks from the Array class, let's take a look at another common class, Range:
+
+```ruby
+(0..5).each { |n| puts n }
+```
+
+Notice how we're using `each` again. Here's a method that allows us to iterate over the range in slices:
+
+```ruby
+(1..100).each_slice(5) { |set| puts set.inspect }
+```
+
+Which would produce:
+
+```
+[1, 2, 3, 4, 5]
+[6, 7, 8, 9, 10]
+...snip...
+[96, 97, 98, 99, 100]
+```
+
+## Counting to Infinity
+
+In most languages, dividing by zero raises an error:
+
+```
+>>> 1.0/0
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+ZeroDivisionError: float division by zero
+```
+
+Not so in Ruby:
+
+```ruby
+Infinity = 1.0/0
+# => Infinity
+```
+
+Interestingly, you can create a Range that uses Infinity:
+
+```ruby
+all_positive_numbers = 0..Infinity
+all_positive_numbers.include?(3) # => true
+all_positive_numbers.include?(41343124) # => true
+us_debt = 17_000_000_000_000
+all_positive_numbers.include?(us_debt) # => true
+```
+
+You can even create a range between negative and positive Infinity:
+
+```ruby
+all_numbers = -Infinity..Infinity
+all_numbers.include?(-35623) # => true
+```
+
+You could, if you wanted to, use `each` to iterate over every postive number. It may take some time:
+
+```ruby
+all_positive_numbers.each { |n| puts n }
+```
+
+Better, though to perhaps take a few:
+
+```ruby
+all_positive_numbers.take(5)
+# => => [0, 1, 2, 3, 4]
+```
+
+Or perhaps in slices:
+
+```ruby
+ all_positive_numbers.each_slice(5).take(2)
+=> [[0, 1, 2, 3, 4], [5, 6, 7, 8, 9]]
+```
+
+Notice how we didn't pass a block to `each_slice` this time? I wonder what happens if we just call `each` by itself?
+
+```ruby
+enumerator = all_positive_numbers.each
+# => #<Enumerator: 0..Infinity:each>
+
+enumerator.next # => 0
+enumerator.next # => 1
+enumerator.next # => 2
+```
+
+Interesting.
+
+## Hashes
+
+Hashes allow table-like mappings between names and values:
+
+```ruby
+sigils = {
+  'Stark'     => 'Direwolf',
+  'Lannister' => 'Lion',
+  'Greyjoy'   => 'Kraken'
+}
+```
+
+Hashes, too, have an `each` method:
+
+```ruby
+sigils.each do |house, animal|
+  puts "The sigil of House #{house} is a #{animal}."
+end
+```
+
+Let's have a look at the methods on a Hash:
+
+```ruby
+Hash.instance_methods
+# => [..., :each, :map, :select, :reject, :all?, :any?, ...]
+```
+
+Hmm, these are the same methods that appear on the `Array` and `Range` classes.
+
+## Introducing Enumerable
+
+`Array`, `Range`, and `Hash` share a number of identical (and useful) methods. How is this happening?
+
+The answer that each of these classes include the Enumerable module. With a module, you can define a number of methods. Other classes can include that module to borrow its methods.
+
+You can mix in Enumerable to any class which implements the `each` method. In other words, all the methods you've seen so far (`select`, `each_with_index`, `all?`, `map`, etc.) have been written purely in terms of `each`.
+
+*This article is a work in progress. Still to come: writing your own class that implements `each`.*
