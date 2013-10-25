@@ -3,11 +3,9 @@
   
   <%= partial "talks/meta", locals: { talk: talk } %>
 
-  <p>
-    <% upcoming talk.date do %>
-      <strong>Upcoming talk:</strong>
-    <% end %>
-    
-    <%= talk.intro %>
-  </p>
+  <% upcoming talk.date do %>
+    <strong>Upcoming talk:</strong>
+  <% end %>
+
+  <%= talk.intro %>
 </div>
