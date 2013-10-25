@@ -46,13 +46,13 @@
 
     <p><em>This article is a work-in-progress. The first section is aimed at newcomers to Ruby, so feel free to skip it if you already know it.</em></p>
 
-<p><a href="http://ruby-doc.org/core-2.0.0/Enumerable.html">Enumerable</a> is a fascinating mixin. Its use makes for unusual, characteristic, and expressive Ruby code. In this talk, we&#39;ll take a look at Ruby&#39;s array class, discuss why Rubyists don&#39;t use <code>for</code>, and learn how to count the uncountable.</p>
+<p><a href="http://ruby-doc.org/core-2.0.0/Enumerable.html">Enumerable</a> is a fascinating mixin. Its use makes for unusual, characteristic, and expressive Ruby code. In this talk, we&#39;ll take a look at Ruby&#39;s <code>Array</code> class, discuss why Rubyists don&#39;t use <code>for</code>, and learn how to count the uncountable.</p>
 
 <h2>Forming arrays</h2>
 
-<p>When I first starting writing Ruby, I remember being impressed with the breadth and expressiveness of the standard library.</p>
+<p>When I first starting writing Ruby, I remember being impressed with the breadth and expressiveness of the standard library. Perhaps none stood out to me more than the <code>Array</code> class. </p>
 
-<p>Let&#39;s look at a few array examples. To try any of these examples, you can follow along using the interactive console that ships with Ruby, <code>irb</code>. Type <code>irb</code> in a terminal and hit return to open an interactive Ruby session.</p>
+<p>Let&#39;s look at a few examples. You can try any of these examples using the interactive console that ships with Ruby, <code>irb</code>. Just type <code>irb</code> in a terminal and hit return to start an interactive Ruby session.</p>
 
 <p>Let&#39;s start by creating an array:</p>
 <pre class="highlight ruby"><span class="n">parents</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&quot;Ned&quot;</span><span class="p">,</span> <span class="s2">&quot;Catelyn&quot;</span><span class="o">]</span>
@@ -175,7 +175,7 @@
 </pre>
 <h2>Range iteration</h2>
 
-<p>Now you&#39;ve seen a few tricks from the Array class, let&#39;s take a look at another common class, Range:</p>
+<p>Now you&#39;ve seen a few tricks from the <code>Array</code> class, let&#39;s take a look at another common class, <code>Range</code>:</p>
 <pre class="highlight ruby"><span class="p">(</span><span class="mi">0</span><span class="nf">..</span><span class="mi">5</span><span class="p">)</span><span class="nf">.each</span> <span class="p">{</span> <span class="o">|</span><span class="n">n</span><span class="o">|</span> <span class="nb">puts</span> <span class="n">n</span> <span class="p">}</span>
 </pre>
 <p>Notice how we&#39;re using <code>each</code> again. Here&#39;s a method that allows us to iterate over the range in slices:</p>
@@ -199,7 +199,7 @@ ZeroDivisionError: float division by zero
 <pre class="highlight ruby"><span class="no">Infinity</span> <span class="o">=</span> <span class="mi">1</span><span class="o">.</span><span class="mi">0</span><span class="o">/</span><span class="mi">0</span>
 <span class="c1"># =&gt; Infinity</span>
 </pre>
-<p>Interestingly, you can create a Range that uses Infinity:</p>
+<p>Interestingly, you can create a range that uses Infinity:</p>
 <pre class="highlight ruby"><span class="n">all_positive_numbers</span> <span class="o">=</span> <span class="mi">0</span><span class="nf">..</span><span class="no">Infinity</span>
 <span class="n">all_positive_numbers</span><span class="nf">.include?</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="c1"># =&gt; true</span>
 <span class="n">all_positive_numbers</span><span class="nf">.include?</span><span class="p">(</span><span class="mi">41343124</span><span class="p">)</span> <span class="c1"># =&gt; true</span>
