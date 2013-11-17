@@ -48,7 +48,7 @@
 
 <p>Static site generators let you break up your website into templates and pages that are compiled together to create a static HTML website.</p>
 
-<p>In this example, we&#39;re going to build a site to host notes on talks. You can <a href="http://github.com/nzruby/talks">see the finished project on GitHub</a>.</p>
+<p>In this example, we&rsquo;re going to build a site to host notes on talks. You can <a href="http://github.com/nzruby/talks">see the finished project on GitHub</a>.</p>
 
 <h2>Starting out</h2>
 
@@ -65,7 +65,7 @@
 
 <h2>Adding a talk</h2>
 
-<p>Let&#39;s add a talk. Create a <code>source/talks</code> directory, and add a new file called <code>middleman.md.erb</code>:</p>
+<p>Let&rsquo;s add a talk. Create a <code>source/talks</code> directory, and add a new file called <code>middleman.md.erb</code>:</p>
 <pre class="highlight markdown"><span class="nn">---</span>
 <span class="s">title</span><span class="p">:</span> <span class="s">Middleman</span>
 <span class="s">layout</span><span class="p">:</span> <span class="s">talk</span>
@@ -73,7 +73,7 @@
 <span class="nn">---</span>
 Welcome to my talk!
 </pre>
-<p>The two sets of three dashes (<code>---</code>) delineate the page&#39;s metadata. The metadata, also known as the <strong>frontmatter</strong>, consists of <a href="http://yaml.org/">YAML</a>. Everything following the frontmatter is the content of the page (in this case, written in <a href="http://daringfireball.net/projects/markdown/">Markdown</a>).</p>
+<p>The two sets of three dashes (<code>---</code>) delineate the page&rsquo;s metadata. The metadata, also known as the <strong>frontmatter</strong>, consists of <a href="http://yaml.org/">YAML</a>. Everything following the frontmatter is the content of the page (in this case, written in <a href="http://daringfireball.net/projects/markdown/">Markdown</a>).</p>
 
 <h2>Understanding frontmatter</h2>
 
@@ -85,7 +85,7 @@ Welcome to my talk!
 
 <h2>Generating a list of talks</h2>
 
-<p>Now that we have our talks, we want to create a list of them to display on the home page. The simplest way we can do this is through Middleman&#39;s <code>sitemap.resources</code>, which contains a list of all resources in the site.</p>
+<p>Now that we have our talks, we want to create a list of them to display on the home page. The simplest way we can do this is through Middleman&rsquo;s <code>sitemap.resources</code>, which contains a list of all resources in the site.</p>
 
 <p>We can filter these resources by URL, for instance, to select only those that are inside the <code>source/talks</code> directory.</p>
 
@@ -104,7 +104,7 @@ Welcome to my talk!
 
 <p><code>link_to</code> is a helper method provided to us by Middleman for generating links. We can write our own helper methods, too.</p>
 
-<p>Let&#39;s extract the awkward <code>sitemap.resources.select</code> code in the example above to something nicer.</p>
+<p>Let&rsquo;s extract the awkward <code>sitemap.resources.select</code> code in the example above to something nicer.</p>
 
 <p>Inside <code>config.rb</code>, add the following method definition to the <code>helpers</code> block:</p>
 <pre class="highlight ruby"><span class="n">helpers</span> <span class="k">do</span>
@@ -130,7 +130,7 @@ Welcome to my talk!
 
 <p>But can we do better? The <code>talk.data.title</code> still feels awkward. It would be much nicer if we could just use <code>talk.title</code>.</p>
 
-<p>Let&#39;s extract talks into their own class. For convenience, we&#39;ll continue to keep everying inside the <code>helpers</code> block inside <code>config.rb</code> for now.</p>
+<p>Let&rsquo;s extract talks into their own class. For convenience, we&rsquo;ll continue to keep everying inside the <code>helpers</code> block inside <code>config.rb</code> for now.</p>
 <pre class="highlight ruby"><span class="n">helpers</span> <span class="k">do</span>
   <span class="k">class </span><span class="nc">Talk</span>
   <span class="k">end</span>
@@ -159,7 +159,7 @@ Welcome to my talk!
 </pre>
 <p>We pass in <code>sitemap.resources</code> because it allows us to decouple the <code>Talk</code> class from having to know about the <code>sitemap</code>, and make it easier to test later if we need to.</p>
 
-<p>We&#39;re still returning a simple filtered array of resources. Let&#39;s change that to returning an array of <code>Talk</code> instances:</p>
+<p>We&rsquo;re still returning a simple filtered array of resources. Let&rsquo;s change that to returning an array of <code>Talk</code> instances:</p>
 <pre class="highlight ruby"><span class="k">class </span><span class="nc">Talk</span>
   <span class="k">def </span><span class="nf">initialize</span><span class="p">(</span><span class="n">resource</span><span class="p">)</span>
     <span class="vi">@resource</span> <span class="o">=</span> <span class="n">resource</span>
@@ -188,16 +188,16 @@ Welcome to my talk!
   <span class="k">end</span>
 <span class="k">end</span>
 </pre>
-<p>We&#39;ve created a <a href="http://en.wikipedia.org/wiki/Decorator_pattern">Decorator</a> for the <code>resource</code> object. We&#39;ve added the methods we&#39;d like to have available – in this case, <code>url</code> and <code>title</code>, that simply delegate to the <code>resource</code> object underneath.</p>
+<p>We&rsquo;ve created a <a href="http://en.wikipedia.org/wiki/Decorator_pattern">Decorator</a> for the <code>resource</code> object. We&rsquo;ve added the methods we&rsquo;d like to have available – in this case, <code>url</code> and <code>title</code>, that simply delegate to the <code>resource</code> object underneath.</p>
 
 <p>Now we can drop the <code>data</code> method in <code>index.html.erb</code>:</p>
 <pre class="highlight erb"><span class="nt">&lt;li&gt;</span><span class="cp">&lt;%=</span> <span class="n">link_to</span> <span class="n">talk</span><span class="nf">.title</span><span class="p">,</span> <span class="n">talk</span><span class="nf">.url</span> <span class="cp">%&gt;</span><span class="nt">&lt;/li&gt;</span>
 </pre>
-<p>Great! But there&#39;s still a little room for refactoring.</p>
+<p>Great! But there&rsquo;s still a little room for refactoring.</p>
 
 <h2>Refactoring the Talk class</h2>
 
-<p>In <code>initialize</code>, we&#39;re passing in an object that we&#39;re going to delegate other methods to. It turns out there&#39;s <a href="http://www.ruby-doc.org/stdlib-2.0.0/libdoc/delegate/rdoc/SimpleDelegator.html">a class in the standard library which does this for us</a>, so we can simplify our code:</p>
+<p>In <code>initialize</code>, we&rsquo;re passing in an object that we&rsquo;re going to delegate other methods to. It turns out there&rsquo;s <a href="http://www.ruby-doc.org/stdlib-2.0.0/libdoc/delegate/rdoc/SimpleDelegator.html">a class in the standard library which does this for us</a>, so we can simplify our code:</p>
 <pre class="highlight ruby"><span class="k">class </span><span class="nc">Talk</span> <span class="o">&lt;</span> <span class="no">SimpleDelegator</span>
   <span class="k">def </span><span class="nf">title</span>
     <span class="n">data</span><span class="nf">.title</span>
@@ -214,7 +214,7 @@ Welcome to my talk!
   <span class="k">end</span>
 <span class="k">end</span>
 </pre>
-<p>Any method on the <code>resource</code> object becomes available for use. We don&#39;t need to explicitly define the <code>url</code> or <code>data</code> methods any more. We can also throw away <code>initialize</code>, because <code>SimpleDelegator</code> does that for us.</p>
+<p>Any method on the <code>resource</code> object becomes available for use. We don&rsquo;t need to explicitly define the <code>url</code> or <code>data</code> methods any more. We can also throw away <code>initialize</code>, because <code>SimpleDelegator</code> does that for us.</p>
 
 <p>Finally, extract the class from the <code>helpers</code> block and move it into its own file. Move the class into a file called <code>lib/talk.rb</code>, and use <code>require</code> to load it into <code>config.rb</code>:</p>
 <pre class="highlight ruby"><span class="nb">require</span> <span class="s1">&#39;./lib/talk&#39;</span>
@@ -227,7 +227,7 @@ Welcome to my talk!
 </pre>
 <p>Much nicer.</p>
 
-<p>Be aware that if <code>talk.rb</code> changes, Middleman won&#39;t pick up on it by default unless you restart the server.</p>
+<p>Be aware that if <code>talk.rb</code> changes, Middleman won&rsquo;t pick up on it by default unless you restart the server.</p>
 
 <h2>Building the site</h2>
 
