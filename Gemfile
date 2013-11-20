@@ -1,7 +1,7 @@
 source 'http://rubygems.org'
 
 # Use Middleman for static site generation
-gem "middleman", "~>3.1.5"
+gem "middleman", "~>3.2.0"
 
 # Use Middleman Syntax for syntax highlighting (requires pygments)
 gem "middleman-syntax"
