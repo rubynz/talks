@@ -450,9 +450,9 @@ end
 Now, we can use all the wonderful methods we could with `Array`, `Range`, and `Hash`:
 
 ```ruby
-bookshop.length
 bookshop.filter { |book| book.price <= 5.00 }
 bookshop.any? { |book| book.title.start_with?('Complete') }
+...
 ```
 
 `Enumerable` gives you all these methods for free. You just need to define what `each` means to you.
