@@ -128,7 +128,7 @@
 </pre>
 <p>Because most methods on array return another array, you can chain methods together:</p>
 <pre class="highlight ruby"><span class="n">starks</span><span class="nf">.sort.reverse</span>
-<span class="o">=&gt;</span> <span class="o">[</span><span class="s2">&quot;Sansa&quot;</span><span class="p">,</span> <span class="s2">&quot;Robb&quot;</span><span class="p">,</span> <span class="s2">&quot;Rickon&quot;</span><span class="p">,</span> <span class="s2">&quot;Ned&quot;</span><span class="p">,</span> <span class="s2">&quot;Catelyn&quot;</span><span class="p">,</span> <span class="s2">&quot;Bran&quot;</span><span class="p">,</span> <span class="s2">&quot;Arya&quot;</span><span class="o">]</span>
+<span class="c1"># =&gt; [&quot;Sansa&quot;, &quot;Robb&quot;, &quot;Rickon&quot;, &quot;Ned&quot;, &quot;Catelyn&quot;, &quot;Bran&quot;, &quot;Arya&quot;]</span>
 </pre>
 <p>Here, we&rsquo;re using a block sorting by the length of their name:</p>
 <pre class="highlight ruby"><span class="n">starks</span><span class="nf">.sort_by</span> <span class="p">{</span> <span class="o">|</span><span class="nb">name</span><span class="o">|</span> <span class="nb">name</span><span class="nf">.length</span> <span class="p">}</span>
@@ -147,7 +147,7 @@
 </pre>
 <p>Let&rsquo;s add the last name to each member of the Stark house. This time, we&rsquo;re going to use <code>map</code>&rsquo;s brother, <code>map!</code>:</p>
 <pre class="highlight ruby"><span class="n">starks</span><span class="nf">.map!</span> <span class="p">{</span> <span class="o">|</span><span class="n">first_name</span><span class="o">|</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">first_name</span><span class="si">}</span><span class="s2"> Stark&quot;</span> <span class="p">}</span>
-<span class="c1"># =&gt; =&gt; [&quot;Ned Stark&quot;, &quot;Catelyn Stark&quot;, &quot;Robb Stark&quot;, &quot;Sansa Stark&quot;, &quot;Arya Stark&quot;, &quot;Bran Stark&quot;, &quot;Rickon Stark&quot;]</span>
+<span class="c1"># =&gt; [&quot;Ned Stark&quot;, &quot;Catelyn Stark&quot;, &quot;Robb Stark&quot;, &quot;Sansa Stark&quot;, &quot;Arya Stark&quot;, &quot;Bran Stark&quot;, &quot;Rickon Stark&quot;]</span>
 </pre>
 <p>The difference between <code>map</code> and <code>map!</code> is that <code>map</code> will return a <em>new</em> array, while <code>map!</code> will modify the existing array.</p>
 
@@ -159,7 +159,7 @@
 
 <p>Now that we have all our Starks properly named, let&rsquo;s add one more:</p>
 <pre class="highlight ruby"><span class="n">starks</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;Jon Snow&quot;</span>
-<span class="o">=&gt;</span> <span class="o">[</span><span class="s2">&quot;Ned Stark&quot;</span><span class="p">,</span> <span class="s2">&quot;Catelyn Stark&quot;</span><span class="p">,</span> <span class="s2">&quot;Robb Stark&quot;</span><span class="p">,</span> <span class="s2">&quot;Sansa Stark&quot;</span><span class="p">,</span> <span class="s2">&quot;Arya Stark&quot;</span><span class="p">,</span> <span class="s2">&quot;Bran Stark&quot;</span><span class="p">,</span> <span class="s2">&quot;Rickon Stark&quot;</span><span class="p">,</span> <span class="s2">&quot;Jon Snow&quot;</span><span class="o">]</span>
+<span class="c1"># =&gt; [&quot;Ned Stark&quot;, &quot;Catelyn Stark&quot;, &quot;Robb Stark&quot;, &quot;Sansa Stark&quot;, &quot;Arya Stark&quot;, &quot;Bran Stark&quot;, &quot;Rickon Stark&quot;, &quot;Jon Snow&quot;]</span>
 </pre>
 <p>How would we know if this array contained someone whose last name was Snow? We could use <code>select</code>, but it would have to iterate through every item in the array, even if it had already found a Snow. Wouldn&rsquo;t it be better if we had a method that returned <code>true</code> the moment it found one?</p>
 <pre class="highlight ruby"><span class="n">starks</span><span class="nf">.any?</span> <span class="p">{</span> <span class="o">|</span><span class="nb">name</span><span class="o">|</span> <span class="nb">name</span><span class="nf">.ends_with?</span><span class="p">(</span><span class="s1">&#39;Snow&#39;</span><span class="p">)</span> <span class="p">}</span>
@@ -215,11 +215,11 @@ ZeroDivisionError: float division by zero
 </pre>
 <p>It may take some time. Better, perhaps, to take just a few:</p>
 <pre class="highlight ruby"><span class="n">all_positive_numbers</span><span class="nf">.take</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-<span class="c1"># =&gt; =&gt; [0, 1, 2, 3, 4]</span>
+<span class="c1"># =&gt; [0, 1, 2, 3, 4]</span>
 </pre>
 <p>Or perhaps in slices:</p>
 <pre class="highlight ruby"> <span class="n">all_positive_numbers</span><span class="nf">.each_slice</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="nf">.take</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-<span class="o">=&gt;</span> <span class="o">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="o">]</span><span class="p">,</span> <span class="o">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="o">]]</span>
+<span class="c1"># =&gt; [[0, 1, 2, 3, 4], [5, 6, 7, 8, 9]]</span>
 </pre>
 <p>Notice how we didn&rsquo;t pass a block to <code>each_slice</code> this time? I wonder what happens if we just call <code>each</code> by itself?</p>
 <pre class="highlight ruby"><span class="n">enumerator</span> <span class="o">=</span> <span class="n">all_positive_numbers</span><span class="nf">.each</span>
