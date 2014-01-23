@@ -351,9 +351,9 @@ ZeroDivisionError: float division by zero
 <span class="k">end</span>
 </pre>
 <p>Now, we can use all the wonderful methods we could with <code>Array</code>, <code>Range</code>, and <code>Hash</code>:</p>
-<pre class="highlight ruby"><span class="n">bookshop</span><span class="nf">.length</span>
-<span class="n">bookshop</span><span class="nf">.filter</span> <span class="p">{</span> <span class="o">|</span><span class="n">book</span><span class="o">|</span> <span class="n">book</span><span class="nf">.price</span> <span class="o">&lt;=</span> <span class="mi">5</span><span class="o">.</span><span class="mo">00</span> <span class="p">}</span>
+<pre class="highlight ruby"><span class="n">bookshop</span><span class="nf">.filter</span> <span class="p">{</span> <span class="o">|</span><span class="n">book</span><span class="o">|</span> <span class="n">book</span><span class="nf">.price</span> <span class="o">&lt;=</span> <span class="mi">5</span><span class="o">.</span><span class="mo">00</span> <span class="p">}</span>
 <span class="n">bookshop</span><span class="nf">.any?</span> <span class="p">{</span> <span class="o">|</span><span class="n">book</span><span class="o">|</span> <span class="n">book</span><span class="nf">.title.start_with?</span><span class="p">(</span><span class="s1">&#39;Complete&#39;</span><span class="p">)</span> <span class="p">}</span>
+<span class="nf">..</span><span class="o">.</span>
 </pre>
 <p><code>Enumerable</code> gives you all these methods for free. You just need to define what <code>each</code> means to you.</p>
 
