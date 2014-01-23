@@ -6,9 +6,9 @@ venue: Christchurch Ruby
 intro: What's it like to write Ruby? Learn how to write idiomatic Ruby with one of Ruby's most-celebrated mixins.
 ---
 
-*This article is a work-in-progress. The first section is aimed at newcomers to Ruby, so feel free to skip it if you already know it.*
+**The first few sections are aimed at newcomers to Ruby, so feel free to [skip it](#enumerable) if you already know it.**
 
-[Enumerable](http://ruby-doc.org/core-2.0.0/Enumerable.html) is a fascinating mixin. Its use makes for unusual, characteristic, and expressive Ruby code. In this talk, we'll take a look at Ruby's `Array` class, discuss why Rubyists don't use `for`, and learn how to count the uncountable.
+[Enumerable](http://ruby-doc.org/core-2.1.0/Enumerable.html) is a fascinating mixin. Its use makes for unusual, characteristic, and expressive Ruby code. In this talk, we'll take a look at Ruby's `Array` class, discuss why Rubyists don't use `for`, and learn how to count the uncountable.
 
 ## Forming arrays
 
@@ -318,12 +318,154 @@ Hash.instance_methods
 
 Hmm, these are the same methods that appear on the `Array` and `Range` classes.
 
+<a name="enumerable"></a>
+
 ## Introducing Enumerable
 
 `Array`, `Range`, and `Hash` share a number of identical (and useful) methods. How is this happening?
 
-The answer that each of these classes include the Enumerable module. With a module, you can define a number of methods. Other classes can include that module to borrow its methods.
+The answer is that each of these classes include the `Enumerable` module. With a module, you can define a number of methods. Other classes can include that module to borrow its methods.
 
 You can mix in Enumerable to any class which implements the `each` method. In other words, all the methods you've seen so far (`select`, `each_with_index`, `all?`, `map`, etc.) have been written purely in terms of `each`.
 
-*This article is a work in progress. Still to come: writing your own class that implements `each`.*
+`Array`, `Range`, and `Hash` all implement their own `each` method, and then simply include the `Enumerable` module to get all of the convienient methods.
+
+## Ducking under the hood
+
+How does that work? Well, here's how `map` could have been implemented inside `Enumerable`:
+
+
+```ruby
+module Enumerable
+  def map
+    new_collection = []
+
+    self.each do |item|
+      modified_item = yield item
+      new_collection << modified_item
+    end
+
+    new_collection
+  end
+end
+```
+
+`Enumerable` doesn't know about how you've implemented `each`. It just assumes that you have defined a method named `each` that will yield each value in your collection. How you choose to define `each` is up to you.
+
+This is a beautiful example of polymorphism in the wild. By abstracting away the underlying class or data structure, `Enumerable` solves a number of common problems concerning collections in one fell swoop, in a way that is very flexible.
+
+## Bookshop example
+
+All well and good, but how can we use it?
+
+Imagine we had a `Book` and a `Bookshop` class:
+
+```ruby
+class Book < Struct.new(:title, :price)
+end
+
+class Bookshop < Struct.new(:books)
+  def number_of_books
+    books.length
+  end
+end
+```
+
+The `Struct` is a little trick we're using to sketch out the classes. They can be used like this:
+
+```ruby
+books = [
+  Book.new('The Little Book of Calm', 2.20),
+  Book.new('Complete Works of Dickens', 300),
+  Book.new('The Elephant and the Balloon', 5)
+]
+
+black_books = Bookshop.new(books)
+black_books.number_of_books # => 3
+```
+
+## Defining each
+
+Let's implement our own `each`, which we can use to iterate through all the books in the bookshop.
+
+```ruby
+class Bookshop < Struct.new(:books)
+  # ...snip...
+
+  def each
+    books.each { |book| yield book }
+  end
+end
+```
+
+We're implementing `each` in this case by calling `each` on the underlying array of books. 
+
+Not too interesting, but we aren't restricted to arrays – every call to `each` could execute a database query, or query a web service, or take a reading from a weather station, for example. It's entirely up to you.
+
+Here's how you could use the `each` method we've implemented:
+
+```ruby
+bookshop.each do |book|
+  puts book.title
+end
+```
+
+## Mixing in the magic
+
+The clever bit comes when we include the `Enumerable` module.
+
+```ruby
+class Bookshop < Struct.new(:books)
+  include Enumerable
+  # ...snip...
+end
+```
+
+Now, we can use all the wonderful methods we could with `Array`, `Range`, and `Hash`:
+
+```ruby
+bookshop.length
+bookshop.filter { |book| book.price <= 5.00 }
+bookshop.any? { |book| book.title.start_with?('Complete') }
+```
+
+## Building on the abstraction
+
+We can also easily implement methods using `Enumerable`-provided methods:
+
+```ruby
+class Bookshop < Struct.new(:books)
+  # ...snip...
+
+  def prices
+    map(&:price)
+  end
+
+  def titles
+    map(&:title)
+  end
+
+  def under_ten_dollars
+    filter { |book| book.price < 10 }
+  end
+
+  def total_value_of_stock
+    prices.inject(:+)
+  end
+end
+```
+
+Let's take a look:
+
+```ruby
+black_books.prices # => [2.20, 300, 5]
+black_books.under_ten_dollars # a list of books
+black_books.total_value_of_stock # => 307.2
+```
+
+And that's `Enumerable`!
+
+## Further reading
+
+* [Enumerable documentation](http://ruby-doc.org/core-2.1.0/Enumerable.html)
+* [A Guide to Ruby Collections](http://www.sitepoint.com/guide-ruby-collections-iii-enumerable-enumerator/)
