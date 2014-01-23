@@ -210,10 +210,10 @@ ZeroDivisionError: float division by zero
 <pre class="highlight ruby"><span class="n">all_numbers</span> <span class="o">=</span> <span class="o">-</span><span class="no">Infinity</span><span class="nf">..</span><span class="no">Infinity</span>
 <span class="n">all_numbers</span><span class="nf">.include?</span><span class="p">(</span><span class="o">-</span><span class="mi">35623</span><span class="p">)</span> <span class="c1"># =&gt; true</span>
 </pre>
-<p>You could, if you wanted to, use <code>each</code> to iterate over every postive number. It may take some time:</p>
+<p>You could, if you wanted to, use <code>each</code> to iterate over every postive number.</p>
 <pre class="highlight ruby"><span class="n">all_positive_numbers</span><span class="nf">.each</span> <span class="p">{</span> <span class="o">|</span><span class="n">n</span><span class="o">|</span> <span class="nb">puts</span> <span class="n">n</span> <span class="p">}</span>
 </pre>
-<p>Better, though to perhaps take a few:</p>
+<p>It may take some time. Better, perhaps, to take just a few:</p>
 <pre class="highlight ruby"><span class="n">all_positive_numbers</span><span class="nf">.take</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 <span class="c1"># =&gt; =&gt; [0, 1, 2, 3, 4]</span>
 </pre>
@@ -256,48 +256,63 @@ ZeroDivisionError: float division by zero
 <h2>Introducing Enumerable</h2>
 
 <p><code>Array</code>, <code>Range</code>, and <code>Hash</code> share a number of identical (and useful) methods. How is this happening?</p>
+<pre class="highlight ruby"><span class="no">Hash</span><span class="nf">.included_modules</span> <span class="c1"># =&gt; [Enumerable, …]</span>
+<span class="nb">Array</span><span class="nf">.included_modules</span> <span class="c1"># =&gt; [Enumerable, …]</span>
+<span class="no">Range</span><span class="nf">.included_modules</span> <span class="c1"># =&gt; [Enumerable, …]</span>
+</pre>
+<p>Each of these classes include the <code>Enumerable</code> module. What does that do?</p>
+<pre class="highlight ruby"><span class="no">Enumerable</span><span class="nf">.instance_methods</span>
+<span class="c1"># =&gt; [:to_a, :entries, :sort, :sort_by, :grep, :count, :find, :detect, :find_index, :find_all, :select, :reject, :collect, :map, :flat_map, :collect_concat, :inject, :reduce, :partition, :group_by, :first, :all?, :any?, :one?, :none?, :min, :max, :minmax, :min_by, :max_by, :minmax_by, :member?, :include?, :each_with_index, :reverse_each, :each_entry, :each_slice, :each_cons, :each_with_object, :zip, :take, :take_while, :drop, :drop_while, :cycle, :chunk, :slice_before, :lazy]</span>
+</pre>
+<p>Aha! The methods we&rsquo;ve been using have been defined inside the <code>Enumerable</code> module.</p>
 
-<p>The answer is that each of these classes include the <code>Enumerable</code> module. With a module, you can define a number of methods. Other classes can include that module to borrow its methods.</p>
+<h2>What&rsquo;s a module?</h2>
 
-<p>You can mix in Enumerable to any class which implements the <code>each</code> method. In other words, all the methods you&rsquo;ve seen so far (<code>select</code>, <code>each_with_index</code>, <code>all?</code>, <code>map</code>, etc.) have been written purely in terms of <code>each</code>.</p>
+<p>A module is a collection of methods. Modules are sometimes called “mixins”, because you can <em>mix in</em> the methods defined in a module into a class.</p>
 
-<p><code>Array</code>, <code>Range</code>, and <code>Hash</code> all implement their own <code>each</code> method, and then simply include the <code>Enumerable</code> module to get all of the convienient methods.</p>
-
-<h2>Ducking under the hood</h2>
-
-<p>How does that work? Well, here&rsquo;s how <code>map</code> could have been implemented inside <code>Enumerable</code>:</p>
-<pre class="highlight ruby"><span class="k">module</span> <span class="nn">Enumerable</span>
-  <span class="k">def </span><span class="nf">map</span>
-    <span class="n">new_collection</span> <span class="o">=</span> <span class="o">[]</span>
-
-    <span class="nb">self</span><span class="nf">.each</span> <span class="k">do</span> <span class="o">|</span><span class="n">item</span><span class="o">|</span>
-      <span class="n">modified_item</span> <span class="o">=</span> <span class="k">yield</span> <span class="n">item</span>
-      <span class="n">new_collection</span> <span class="o">&lt;&lt;</span> <span class="n">modified_item</span>
-    <span class="k">end</span>
-
-    <span class="n">new_collection</span>
+<p>Do you bake? I&rsquo;m terrible at it. I can never remember to keep an eye on the time. Let&rsquo;s write some Ruby that knows how to bake:</p>
+<pre class="highlight ruby"><span class="k">module</span> <span class="nn">Baking</span>
+  <span class="k">def </span><span class="nf">bake!</span>
+    <span class="s2">&quot;Baking for </span><span class="si">#{</span><span class="n">cooking_time</span><span class="si">}</span><span class="s2"> at </span><span class="si">#{</span><span class="n">temperature</span><span class="si">}</span><span class="s2">&quot;</span>
   <span class="k">end</span>
 <span class="k">end</span>
 </pre>
-<p><code>Enumerable</code> doesn&rsquo;t know about how you&rsquo;ve implemented <code>each</code>. It just assumes that you have defined a method named <code>each</code> that will yield each value in your collection. How you choose to define <code>each</code> is up to you.</p>
+<p>And let&rsquo;s add our newfound baking prowess to a cake:</p>
+<pre class="highlight ruby"><span class="k">class </span><span class="nc">Cake</span>
+  <span class="kp">include</span> <span class="no">Baking</span>
 
-<p>This is a beautiful example of polymorphism in the wild. By abstracting away the underlying class or data structure, <code>Enumerable</code> solves a number of common problems concerning collections in one fell swoop, in a way that is very flexible.</p>
+  <span class="k">def </span><span class="nf">cooking_time</span>
+    <span class="s2">&quot;45 mins&quot;</span>
+  <span class="k">end</span>
 
-<h2>Bookshop example</h2>
+  <span class="k">def </span><span class="nf">temperature</span>
+    <span class="s2">&quot;180ºC&quot;</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre>
+<p>And now our cake knows how to bake itself:</p>
+<pre class="highlight ruby"><span class="n">cake</span> <span class="o">=</span> <span class="no">Cake</span><span class="nf">.new</span>
+<span class="n">cake</span><span class="nf">.bake!</span> <span class="c1"># =&gt; &quot;Baking for 45 mins at 180ºC&quot;</span>
+</pre>
+<h2>Browsing books</h2>
 
-<p>All well and good, but how can we use it?</p>
-
-<p>Imagine we had a <code>Book</code> and a <code>Bookshop</code> class:</p>
+<p>Let&rsquo;s say we had a <code>Book</code> and a <code>Bookshop</code> class:</p>
 <pre class="highlight ruby"><span class="k">class </span><span class="nc">Book</span> <span class="o">&lt;</span> <span class="no">Struct</span><span class="nf">.new</span><span class="p">(</span><span class="ss">:title</span><span class="p">,</span> <span class="ss">:price</span><span class="p">)</span>
 <span class="k">end</span>
 
-<span class="k">class </span><span class="nc">Bookshop</span> <span class="o">&lt;</span> <span class="no">Struct</span><span class="nf">.new</span><span class="p">(</span><span class="ss">:books</span><span class="p">)</span>
+<span class="k">class </span><span class="nc">Bookshop</span>
+  <span class="k">def </span><span class="nf">initialize</span><span class="p">(</span><span class="n">books</span><span class="p">)</span>
+    <span class="vi">@books</span> <span class="o">=</span> <span class="n">books</span>
+  <span class="k">end</span>
+
   <span class="k">def </span><span class="nf">number_of_books</span>
-    <span class="n">books</span><span class="nf">.length</span>
+    <span class="vi">@books</span><span class="nf">.length</span>
   <span class="k">end</span>
 <span class="k">end</span>
 </pre>
-<p>The <code>Struct</code> is a little trick we&rsquo;re using to sketch out the classes. They can be used like this:</p>
+<p>The <code>Struct</code> is a little trick we&rsquo;re using to sketch out the classes.</p>
+
+<p><code>Book</code> and <code>Bookshop</code> can be used like this:</p>
 <pre class="highlight ruby"><span class="n">books</span> <span class="o">=</span> <span class="o">[</span>
   <span class="no">Book</span><span class="nf">.new</span><span class="p">(</span><span class="s1">&#39;The Little Book of Calm&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="o">.</span><span class="mi">20</span><span class="p">),</span>
   <span class="no">Book</span><span class="nf">.new</span><span class="p">(</span><span class="s1">&#39;Complete Works of Dickens&#39;</span><span class="p">,</span> <span class="mi">300</span><span class="p">),</span>
@@ -307,30 +322,30 @@ ZeroDivisionError: float division by zero
 <span class="n">black_books</span> <span class="o">=</span> <span class="no">Bookshop</span><span class="nf">.new</span><span class="p">(</span><span class="n">books</span><span class="p">)</span>
 <span class="n">black_books</span><span class="nf">.number_of_books</span> <span class="c1"># =&gt; 3</span>
 </pre>
+<p>How could we browse through each of the books in the bookstore?</p>
+
 <h2>Defining each</h2>
 
-<p>Let&rsquo;s implement our own <code>each</code>, which we can use to iterate through all the books in the bookshop.</p>
-<pre class="highlight ruby"><span class="k">class </span><span class="nc">Bookshop</span> <span class="o">&lt;</span> <span class="no">Struct</span><span class="nf">.new</span><span class="p">(</span><span class="ss">:books</span><span class="p">)</span>
+<p>Let&rsquo;s make our own <code>each</code>, which will hand us each of the books:</p>
+<pre class="highlight ruby"><span class="k">class </span><span class="nc">Bookshop</span>
   <span class="c1"># ...snip...</span>
 
   <span class="k">def </span><span class="nf">each</span>
-    <span class="n">books</span><span class="nf">.each</span> <span class="p">{</span> <span class="o">|</span><span class="n">book</span><span class="o">|</span> <span class="k">yield</span> <span class="n">book</span> <span class="p">}</span>
+    <span class="vi">@books</span><span class="nf">.each</span> <span class="p">{</span> <span class="o">|</span><span class="n">book</span><span class="o">|</span> <span class="k">yield</span> <span class="n">book</span> <span class="p">}</span>
   <span class="k">end</span>
 <span class="k">end</span>
 </pre>
-<p>We&rsquo;re implementing <code>each</code> in this case by calling <code>each</code> on the underlying array of books. </p>
-
-<p>Not too interesting, but we aren&rsquo;t restricted to arrays – every call to <code>each</code> could execute a database query, or query a web service, or take a reading from a weather station, for example. It&rsquo;s entirely up to you.</p>
-
 <p>Here&rsquo;s how you could use the <code>each</code> method we&rsquo;ve implemented:</p>
 <pre class="highlight ruby"><span class="n">bookshop</span><span class="nf">.each</span> <span class="k">do</span> <span class="o">|</span><span class="n">book</span><span class="o">|</span>
   <span class="nb">puts</span> <span class="n">book</span><span class="nf">.title</span>
 <span class="k">end</span>
 </pre>
+<p>Our <code>each</code> just calls <code>each</code> on the underlying <code>@books</code> array. Your <code>each</code> could be much more interesting – every iteration of <code>each</code> could execute a database query, or query a web service, or take a reading from a weather station, for example. It&rsquo;s entirely up to you.</p>
+
 <h2>Mixing in the magic</h2>
 
 <p>The clever bit comes when we include the <code>Enumerable</code> module.</p>
-<pre class="highlight ruby"><span class="k">class </span><span class="nc">Bookshop</span> <span class="o">&lt;</span> <span class="no">Struct</span><span class="nf">.new</span><span class="p">(</span><span class="ss">:books</span><span class="p">)</span>
+<pre class="highlight ruby"><span class="k">class </span><span class="nc">Bookshop</span>
   <span class="kp">include</span> <span class="no">Enumerable</span>
   <span class="c1"># ...snip...</span>
 <span class="k">end</span>
@@ -340,10 +355,12 @@ ZeroDivisionError: float division by zero
 <span class="n">bookshop</span><span class="nf">.filter</span> <span class="p">{</span> <span class="o">|</span><span class="n">book</span><span class="o">|</span> <span class="n">book</span><span class="nf">.price</span> <span class="o">&lt;=</span> <span class="mi">5</span><span class="o">.</span><span class="mo">00</span> <span class="p">}</span>
 <span class="n">bookshop</span><span class="nf">.any?</span> <span class="p">{</span> <span class="o">|</span><span class="n">book</span><span class="o">|</span> <span class="n">book</span><span class="nf">.title.start_with?</span><span class="p">(</span><span class="s1">&#39;Complete&#39;</span><span class="p">)</span> <span class="p">}</span>
 </pre>
+<p><code>Enumerable</code> gives you all these methods for free. You just need to define what <code>each</code> means to you.</p>
+
 <h2>Building on the abstraction</h2>
 
 <p>We can also easily implement methods using <code>Enumerable</code>-provided methods:</p>
-<pre class="highlight ruby"><span class="k">class </span><span class="nc">Bookshop</span> <span class="o">&lt;</span> <span class="no">Struct</span><span class="nf">.new</span><span class="p">(</span><span class="ss">:books</span><span class="p">)</span>
+<pre class="highlight ruby"><span class="k">class </span><span class="nc">Bookshop</span>
   <span class="c1"># ...snip...</span>
 
   <span class="k">def </span><span class="nf">prices</span>
@@ -368,7 +385,31 @@ ZeroDivisionError: float division by zero
 <span class="n">black_books</span><span class="nf">.under_ten_dollars</span> <span class="c1"># a list of books</span>
 <span class="n">black_books</span><span class="nf">.total_value_of_stock</span> <span class="c1"># =&gt; 307.2</span>
 </pre>
-<p>And that&rsquo;s <code>Enumerable</code>!</p>
+<p>Neat!</p>
+
+<h2>Ducking under the hood</h2>
+
+<p><code>Array</code>, <code>Range</code>, and <code>Hash</code> all implement their own <code>each</code> method, and then simply include the <code>Enumerable</code> module to get all of the convienient methods. How does that work?</p>
+
+<p>Well, here&rsquo;s how <code>map</code> could have been implemented inside <code>Enumerable</code>:</p>
+<pre class="highlight ruby"><span class="k">module</span> <span class="nn">Enumerable</span>
+  <span class="k">def </span><span class="nf">map</span>
+    <span class="n">new_collection</span> <span class="o">=</span> <span class="o">[]</span>
+
+    <span class="nb">self</span><span class="nf">.each</span> <span class="k">do</span> <span class="o">|</span><span class="n">item</span><span class="o">|</span>
+      <span class="n">modified_item</span> <span class="o">=</span> <span class="k">yield</span> <span class="n">item</span>
+      <span class="n">new_collection</span> <span class="o">&lt;&lt;</span> <span class="n">modified_item</span>
+    <span class="k">end</span>
+
+    <span class="n">new_collection</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre>
+<p>In other words, all the methods you&rsquo;ve seen so far (<code>select</code>, <code>each_with_index</code>, <code>all?</code>, <code>map</code>, etc.) have been written purely in terms of <code>each</code>.</p>
+
+<p>This is a beautiful example of polymorphism in the wild. By abstracting away the underlying class or data structure, <code>Enumerable</code> solves a number of common problems concerning collections in one fell swoop. It can handle everything from hashes to bookshops.</p>
+
+<p><code>Enumerable</code>: simple, flexible, and beautiful. Just like Ruby.</p>
 
 <h2>Further reading</h2>
 
