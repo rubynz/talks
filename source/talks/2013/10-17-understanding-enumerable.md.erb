@@ -131,7 +131,7 @@ Because most methods on array return another array, you can chain methods togeth
 
 ```ruby
 starks.sort.reverse
-=> ["Sansa", "Robb", "Rickon", "Ned", "Catelyn", "Bran", "Arya"]
+# => ["Sansa", "Robb", "Rickon", "Ned", "Catelyn", "Bran", "Arya"]
 ```
 
 Here, we're using a block sorting by the length of their name:
@@ -162,7 +162,7 @@ Let's add the last name to each member of the Stark house. This time, we're goin
 
 ```ruby
 starks.map! { |first_name| "#{first_name} Stark" }
-# => => ["Ned Stark", "Catelyn Stark", "Robb Stark", "Sansa Stark", "Arya Stark", "Bran Stark", "Rickon Stark"]
+# => ["Ned Stark", "Catelyn Stark", "Robb Stark", "Sansa Stark", "Arya Stark", "Bran Stark", "Rickon Stark"]
 ```
 
 The difference between `map` and `map!` is that `map` will return a *new* array, while `map!` will modify the existing array.
@@ -177,7 +177,7 @@ Now that we have all our Starks properly named, let's add one more:
 
 ```ruby
 starks << "Jon Snow"
-=> ["Ned Stark", "Catelyn Stark", "Robb Stark", "Sansa Stark", "Arya Stark", "Bran Stark", "Rickon Stark", "Jon Snow"]
+# => ["Ned Stark", "Catelyn Stark", "Robb Stark", "Sansa Stark", "Arya Stark", "Bran Stark", "Rickon Stark", "Jon Snow"]
 ```
 
 How would we know if this array contained someone whose last name was Snow? We could use `select`, but it would have to iterate through every item in the array, even if it had already found a Snow. Wouldn't it be better if we had a method that returned `true` the moment it found one?
@@ -266,14 +266,14 @@ It may take some time. Better, perhaps, to take just a few:
 
 ```ruby
 all_positive_numbers.take(5)
-# => => [0, 1, 2, 3, 4]
+# => [0, 1, 2, 3, 4]
 ```
 
 Or perhaps in slices:
 
 ```ruby
  all_positive_numbers.each_slice(5).take(2)
-=> [[0, 1, 2, 3, 4], [5, 6, 7, 8, 9]]
+# => [[0, 1, 2, 3, 4], [5, 6, 7, 8, 9]]
 ```
 
 Notice how we didn't pass a block to `each_slice` this time? I wonder what happens if we just call `each` by itself?
