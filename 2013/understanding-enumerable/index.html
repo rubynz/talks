@@ -44,9 +44,9 @@
   </span>
 </div>
 
-    <p><em>This article is a work-in-progress. The first section is aimed at newcomers to Ruby, so feel free to skip it if you already know it.</em></p>
+    <p><strong>The first few sections are aimed at newcomers to Ruby, so feel free to <a href="#enumerable">skip it</a> if you already know it.</strong></p>
 
-<p><a href="http://ruby-doc.org/core-2.0.0/Enumerable.html">Enumerable</a> is a fascinating mixin. Its use makes for unusual, characteristic, and expressive Ruby code. In this talk, we&rsquo;ll take a look at Ruby&rsquo;s <code>Array</code> class, discuss why Rubyists don&rsquo;t use <code>for</code>, and learn how to count the uncountable.</p>
+<p><a href="http://ruby-doc.org/core-2.1.0/Enumerable.html">Enumerable</a> is a fascinating mixin. Its use makes for unusual, characteristic, and expressive Ruby code. In this talk, we&rsquo;ll take a look at Ruby&rsquo;s <code>Array</code> class, discuss why Rubyists don&rsquo;t use <code>for</code>, and learn how to count the uncountable.</p>
 
 <h2>Forming arrays</h2>
 
@@ -251,15 +251,131 @@ ZeroDivisionError: float division by zero
 </pre>
 <p>Hmm, these are the same methods that appear on the <code>Array</code> and <code>Range</code> classes.</p>
 
+<p><a name="enumerable"></a></p>
+
 <h2>Introducing Enumerable</h2>
 
 <p><code>Array</code>, <code>Range</code>, and <code>Hash</code> share a number of identical (and useful) methods. How is this happening?</p>
 
-<p>The answer that each of these classes include the Enumerable module. With a module, you can define a number of methods. Other classes can include that module to borrow its methods.</p>
+<p>The answer is that each of these classes include the <code>Enumerable</code> module. With a module, you can define a number of methods. Other classes can include that module to borrow its methods.</p>
 
 <p>You can mix in Enumerable to any class which implements the <code>each</code> method. In other words, all the methods you&rsquo;ve seen so far (<code>select</code>, <code>each_with_index</code>, <code>all?</code>, <code>map</code>, etc.) have been written purely in terms of <code>each</code>.</p>
 
-<p><em>This article is a work in progress. Still to come: writing your own class that implements <code>each</code>.</em></p>
+<p><code>Array</code>, <code>Range</code>, and <code>Hash</code> all implement their own <code>each</code> method, and then simply include the <code>Enumerable</code> module to get all of the convienient methods.</p>
+
+<h2>Ducking under the hood</h2>
+
+<p>How does that work? Well, here&rsquo;s how <code>map</code> could have been implemented inside <code>Enumerable</code>:</p>
+<pre class="highlight ruby"><span class="k">module</span> <span class="nn">Enumerable</span>
+  <span class="k">def </span><span class="nf">map</span>
+    <span class="n">new_collection</span> <span class="o">=</span> <span class="o">[]</span>
+
+    <span class="nb">self</span><span class="nf">.each</span> <span class="k">do</span> <span class="o">|</span><span class="n">item</span><span class="o">|</span>
+      <span class="n">modified_item</span> <span class="o">=</span> <span class="k">yield</span> <span class="n">item</span>
+      <span class="n">new_collection</span> <span class="o">&lt;&lt;</span> <span class="n">modified_item</span>
+    <span class="k">end</span>
+
+    <span class="n">new_collection</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre>
+<p><code>Enumerable</code> doesn&rsquo;t know about how you&rsquo;ve implemented <code>each</code>. It just assumes that you have defined a method named <code>each</code> that will yield each value in your collection. How you choose to define <code>each</code> is up to you.</p>
+
+<p>This is a beautiful example of polymorphism in the wild. By abstracting away the underlying class or data structure, <code>Enumerable</code> solves a number of common problems concerning collections in one fell swoop, in a way that is very flexible.</p>
+
+<h2>Bookshop example</h2>
+
+<p>All well and good, but how can we use it?</p>
+
+<p>Imagine we had a <code>Book</code> and a <code>Bookshop</code> class:</p>
+<pre class="highlight ruby"><span class="k">class </span><span class="nc">Book</span> <span class="o">&lt;</span> <span class="no">Struct</span><span class="nf">.new</span><span class="p">(</span><span class="ss">:title</span><span class="p">,</span> <span class="ss">:price</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="k">class </span><span class="nc">Bookshop</span> <span class="o">&lt;</span> <span class="no">Struct</span><span class="nf">.new</span><span class="p">(</span><span class="ss">:books</span><span class="p">)</span>
+  <span class="k">def </span><span class="nf">number_of_books</span>
+    <span class="n">books</span><span class="nf">.length</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre>
+<p>The <code>Struct</code> is a little trick we&rsquo;re using to sketch out the classes. They can be used like this:</p>
+<pre class="highlight ruby"><span class="n">books</span> <span class="o">=</span> <span class="o">[</span>
+  <span class="no">Book</span><span class="nf">.new</span><span class="p">(</span><span class="s1">&#39;The Little Book of Calm&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="o">.</span><span class="mi">20</span><span class="p">),</span>
+  <span class="no">Book</span><span class="nf">.new</span><span class="p">(</span><span class="s1">&#39;Complete Works of Dickens&#39;</span><span class="p">,</span> <span class="mi">300</span><span class="p">),</span>
+  <span class="no">Book</span><span class="nf">.new</span><span class="p">(</span><span class="s1">&#39;The Elephant and the Balloon&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="o">]</span>
+
+<span class="n">black_books</span> <span class="o">=</span> <span class="no">Bookshop</span><span class="nf">.new</span><span class="p">(</span><span class="n">books</span><span class="p">)</span>
+<span class="n">black_books</span><span class="nf">.number_of_books</span> <span class="c1"># =&gt; 3</span>
+</pre>
+<h2>Defining each</h2>
+
+<p>Let&rsquo;s implement our own <code>each</code>, which we can use to iterate through all the books in the bookshop.</p>
+<pre class="highlight ruby"><span class="k">class </span><span class="nc">Bookshop</span> <span class="o">&lt;</span> <span class="no">Struct</span><span class="nf">.new</span><span class="p">(</span><span class="ss">:books</span><span class="p">)</span>
+  <span class="c1"># ...snip...</span>
+
+  <span class="k">def </span><span class="nf">each</span>
+    <span class="n">books</span><span class="nf">.each</span> <span class="p">{</span> <span class="o">|</span><span class="n">book</span><span class="o">|</span> <span class="k">yield</span> <span class="n">book</span> <span class="p">}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre>
+<p>We&rsquo;re implementing <code>each</code> in this case by calling <code>each</code> on the underlying array of books. </p>
+
+<p>Not too interesting, but we aren&rsquo;t restricted to arrays – every call to <code>each</code> could execute a database query, or query a web service, or take a reading from a weather station, for example. It&rsquo;s entirely up to you.</p>
+
+<p>Here&rsquo;s how you could use the <code>each</code> method we&rsquo;ve implemented:</p>
+<pre class="highlight ruby"><span class="n">bookshop</span><span class="nf">.each</span> <span class="k">do</span> <span class="o">|</span><span class="n">book</span><span class="o">|</span>
+  <span class="nb">puts</span> <span class="n">book</span><span class="nf">.title</span>
+<span class="k">end</span>
+</pre>
+<h2>Mixing in the magic</h2>
+
+<p>The clever bit comes when we include the <code>Enumerable</code> module.</p>
+<pre class="highlight ruby"><span class="k">class </span><span class="nc">Bookshop</span> <span class="o">&lt;</span> <span class="no">Struct</span><span class="nf">.new</span><span class="p">(</span><span class="ss">:books</span><span class="p">)</span>
+  <span class="kp">include</span> <span class="no">Enumerable</span>
+  <span class="c1"># ...snip...</span>
+<span class="k">end</span>
+</pre>
+<p>Now, we can use all the wonderful methods we could with <code>Array</code>, <code>Range</code>, and <code>Hash</code>:</p>
+<pre class="highlight ruby"><span class="n">bookshop</span><span class="nf">.length</span>
+<span class="n">bookshop</span><span class="nf">.filter</span> <span class="p">{</span> <span class="o">|</span><span class="n">book</span><span class="o">|</span> <span class="n">book</span><span class="nf">.price</span> <span class="o">&lt;=</span> <span class="mi">5</span><span class="o">.</span><span class="mo">00</span> <span class="p">}</span>
+<span class="n">bookshop</span><span class="nf">.any?</span> <span class="p">{</span> <span class="o">|</span><span class="n">book</span><span class="o">|</span> <span class="n">book</span><span class="nf">.title.start_with?</span><span class="p">(</span><span class="s1">&#39;Complete&#39;</span><span class="p">)</span> <span class="p">}</span>
+</pre>
+<h2>Building on the abstraction</h2>
+
+<p>We can also easily implement methods using <code>Enumerable</code>-provided methods:</p>
+<pre class="highlight ruby"><span class="k">class </span><span class="nc">Bookshop</span> <span class="o">&lt;</span> <span class="no">Struct</span><span class="nf">.new</span><span class="p">(</span><span class="ss">:books</span><span class="p">)</span>
+  <span class="c1"># ...snip...</span>
+
+  <span class="k">def </span><span class="nf">prices</span>
+    <span class="n">map</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:price</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def </span><span class="nf">titles</span>
+    <span class="n">map</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:title</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def </span><span class="nf">under_ten_dollars</span>
+    <span class="n">filter</span> <span class="p">{</span> <span class="o">|</span><span class="n">book</span><span class="o">|</span> <span class="n">book</span><span class="nf">.price</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="k">def </span><span class="nf">total_value_of_stock</span>
+    <span class="n">prices</span><span class="nf">.inject</span><span class="p">(:</span><span class="o">+</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre>
+<p>Let&rsquo;s take a look:</p>
+<pre class="highlight ruby"><span class="n">black_books</span><span class="nf">.prices</span> <span class="c1"># =&gt; [2.20, 300, 5]</span>
+<span class="n">black_books</span><span class="nf">.under_ten_dollars</span> <span class="c1"># a list of books</span>
+<span class="n">black_books</span><span class="nf">.total_value_of_stock</span> <span class="c1"># =&gt; 307.2</span>
+</pre>
+<p>And that&rsquo;s <code>Enumerable</code>!</p>
+
+<h2>Further reading</h2>
+
+<ul>
+<li><a href="http://ruby-doc.org/core-2.1.0/Enumerable.html">Enumerable documentation</a></li>
+<li><a href="http://www.sitepoint.com/guide-ruby-collections-iii-enumerable-enumerator/">A Guide to Ruby Collections</a></li>
+</ul>
 
   </div>
 
