@@ -132,7 +132,7 @@
 </pre>
 <p>Here, we&rsquo;re using a block sorting by the length of their name:</p>
 <pre class="highlight ruby"><span class="n">starks</span><span class="p">.</span><span class="nf">sort_by</span> <span class="p">{</span> <span class="o">|</span><span class="nb">name</span><span class="o">|</span> <span class="nb">name</span><span class="p">.</span><span class="nf">length</span> <span class="p">}</span>
-<span class="c1"># =&gt; =&gt; ["Sansa", "Arya", "Robb", "Ned", "Catelyn", "Bran", "Rickon"]</span>
+<span class="c1"># =&gt; ["Ned", "Robb", "Arya", "Bran", "Sansa", "Rickon", "Catelyn"]</span>
 </pre>
 <p>If you want to call a single method on each item, there&rsquo;s a shorthand syntax for that:</p>
 <pre class="highlight ruby"><span class="n">starks</span><span class="p">.</span><span class="nf">sort_by</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:length</span><span class="p">)</span>
