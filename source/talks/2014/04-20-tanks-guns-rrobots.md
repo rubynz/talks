@@ -8,6 +8,8 @@ venue: Christchurch Ruby
 We're going to have a battle to the death at this months meetup involving
 robots (well, virtual tanks)
 
+![tanks!](/images/tanks.png "Tanks")
+
 We will be using the [rrobots](http://rubydoc.info/gems/rrobots/0.0.1/frames)
 gem which allows you to easily make tank and then pit it against each other
 in a virtual tournament.
