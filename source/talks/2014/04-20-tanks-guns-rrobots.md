@@ -22,6 +22,10 @@ on the night.  Please simply email a copy of your code to
 
 Also, please Tweet about it and copy in @chchruby #battlearubyist
 
+IF you're interested in a LiveStream of the event... well.. we're not sure
+we'll get round to doing this (or what form it'll take) but please add a +1
+in the comments on [this gist](https://gist.github.com/patrickdavey/10216075)
+
 ##RULES! (and evening flow)##
 
 So, yes, this is Ruby, yes there is meta programming.. however, for _most_
