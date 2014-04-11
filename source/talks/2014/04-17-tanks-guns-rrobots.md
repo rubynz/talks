@@ -3,6 +3,8 @@ title: Battle! A! Fellow! Rubyist! Today!
 layout: talk
 author: Patrick Davey
 venue: Christchurch Ruby
+intro: We're going to have a battle to the death at this months meetup involving
+robots…
 ---
 
 We're going to have a battle to the death at this months meetup involving
