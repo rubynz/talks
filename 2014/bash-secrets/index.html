@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>10 shell secrets that will change your life FOREVER! – NZ Ruby Talks</title>
+    <link href="/stylesheets/application-ff6d8108.css" media="screen" rel="stylesheet" type="text/css" />
+
+    <script type="text/javascript" src="//use.typekit.net/lpd5kis.js"></script>
+    <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+  </head>
+  <body>
+
+    <aside>
+      <a href="/" class="logo">
+        <img alt="NZ Ruby Talks" width="180" height="180" src="/images/logo-1be683a4.png" />
+        NZ Ruby Talks
+      </a>
+
+      <nav>
+        <a href="/">Talks</a>
+        <a href="https://github.com/nzruby/talks">Add your talk</a>
+        <a href="http://ruby.org.nz/">About NZ Ruby</a>
+      </nav>
+    </aside>
+
+    <article>
+      
+  <div class="talk">
+    <h1>10 shell secrets that will change your life FOREVER!</h1>
+
+    <div class="meta">
+  <span class="by">
+    by <span class="author">Malcolm Locke</span>
+  </span>
+
+  <span class="on">
+    on <time datetime="2014-06-19T00:00:00+12:00">
+      19 Jun 2014
+     </time>  
+  </span>
+  
+  <span class="at">
+    at <span class="venue">Christchurch Ruby</span>  
+  </span>
+</div>
+
+    <p>Spoiler:  There are only 5</p>
+
+<hr>
+<pre class="highlight plaintext">cd -
+</pre>
+<p>Change into the directory you were in before this one.  See also pushd and popd
+to maintain a directory stack.</p>
+
+<hr>
+<pre class="highlight plaintext">CTRL+O
+</pre>
+<p>Use this instead of pressing enter to execute the current item in the history
+and advance to the subsequent item.  Very useful for edit / compile / test
+cycles.</p>
+
+<p>Note: <a href="http://apple.stackexchange.com/questions/3253/ctrl-o-behavior-in-terminal-app">not available by default on Mac</a></p>
+
+<hr>
+<pre class="highlight plaintext">seq
+</pre>
+<p>Very useful for generating sequences in the shell.</p>
+<pre class="highlight plaintext">$ for i in `seq 1 5` ; do echo $i ; done
+1
+2
+3
+4
+5
+</pre>
+<hr>
+<pre class="highlight plaintext">${VAR-DEFAULT}
+</pre>
+<p>Specify an overridable default for a shell variable, great in scripts.</p>
+<pre class="highlight plaintext">$ cat default-var.sh
+#!/bin/bash
+DIR=${SPECIAL_DIR-$HOME}
+echo "DIR = $DIR"
+
+$ ./default-var.sh
+DIR=/home/malc
+
+$ SPECIAL_DIR=/foo ./default-var.sh
+DIR=/foo
+</pre>
+<hr>
+<pre class="highlight plaintext">ESC .
+</pre>
+<p>Insert the last argument of the last command in the history at the cursor.
+Great performing a set of command on the same file</p>
+<pre class="highlight plaintext">$ touch /really/long/filename.txt
+$ chown malc:malc &lt;ESC&gt; &lt;.&gt;
+$ chmod 644 &lt;ESC&gt; &lt;.&gt;
+$ vi &lt;ESC&gt; &lt;.&gt;
+</pre>
+<p>Available as <code>ALT+.</code> on Linux.</p>
+
+<h2>Links</h2>
+
+<ul>
+<li><a href="http://wholemeal.co.nz/~malc/10-bash-secrets/">Slides</a></li>
+</ul>
+
+  </div>
+
+
+    </article>
+
+    <script src="/javascripts/upcoming-e8099929.js" type="text/javascript"></script>
+    <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44220139-1', 'ruby.org.nz');
+  ga('send', 'pageview');
+
+</script>
+  </body>
+</html>
