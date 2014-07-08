@@ -23,6 +23,8 @@ Use this instead of pressing enter to execute the current item in the history
 and advance to the subsequent item.  Very useful for edit / compile / test
 cycles.
 
+Note: [not available by default on Mac](http://apple.stackexchange.com/questions/3253/ctrl-o-behavior-in-terminal-app)
+
 ---
 
     seq
@@ -64,6 +66,8 @@ Great performing a set of command on the same file
     $ chown malc:malc <ESC> <.>
     $ chmod 644 <ESC> <.>
     $ vi <ESC> <.>
+
+Available as `ALT+.` on Linux.
 
 Links
 -----
