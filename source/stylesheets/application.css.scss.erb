@@ -1,4 +1,4 @@
-//= require reset
+@import 'reset';
 
 $article-width: 600px;
 $aside-width: 200px;
@@ -37,7 +37,7 @@ p {
 a {
   color: $ruby-red;
   text-decoration: none;
-  
+
   &:hover {
     border-bottom: 2px solid;
   }
@@ -62,7 +62,7 @@ ol {
   list-style-type: decimal;
 }
 
-h1, h2 {
+h1, h2, h3 {
   line-height: 1.2em;
   font-weight: 600;
   font-family: "freight-sans-pro", sans-serif;
@@ -76,6 +76,11 @@ h1 {
 h2 {
   font-size: 1.6em;
   margin: 1em 0;
+}
+
+h3 {
+  color: #333;
+  margin: 0.5em 0;
 }
 
 time.grouping {
@@ -94,13 +99,13 @@ aside {
   font-family: "freight-sans-pro", sans-serif;
   float: left;
   width: 200px;
-  
+
   .logo {
     color: black;
     display: block;
     font-size: 1.6em;
     text-align: center;
-    
+
     img {
       margin-bottom: 0.5em;
     }
@@ -109,10 +114,10 @@ aside {
       border-style: none;
     }
   }
-  
+
   nav {
     margin: 1em 0;
-  
+
     a {
       display: block;
       float: left;
