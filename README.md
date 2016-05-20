@@ -26,3 +26,7 @@ On Windows:
 If you have access, you can push the site live by running:
 
     rake publish
+
+## License
+
+Ruby Logo is [CC0](https://creativecommons.org/publicdomain/zero/1.0/) courtesy of @aupajo.
