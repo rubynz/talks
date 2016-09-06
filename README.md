@@ -16,7 +16,7 @@ On Mac OS X or Linux, `cd` into the project directory and run:
 
 On Windows:
 
-1. Install [Ruby 2.0.0](http://ruby-lang.org)
+1. Install [Ruby 2.3.1](http://ruby-lang.org)
 2. Install [Bundler](http://gembundler.com)
 3. Run `bundle install` from the project directory
 4. Run `bundle exec middleman server` to start a local server
