@@ -1,9 +1,26 @@
 require 'forwardable'
+require 'time'
 
 class Talk < SimpleDelegator
   extend Forwardable
 
+  PATH_DATE_REGEX = %r[
+    (20\d{2}) # Year
+    /
+    (\d{2}) # Month
+    -
+    (\d{2})  # Day
+  ]x
+
   def_delegators :data, :title, :author, :intro, :venue
+
+  def date
+    Date.parse(date_parts_from_path)
+  end
+
+  def date_parts_from_path
+    path.scan(PATH_DATE_REGEX).flatten.join('-')
+  end
 
   def presented_at
     date.strftime('%-d %b %Y')

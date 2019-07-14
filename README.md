@@ -12,11 +12,11 @@ Clone this repository.
 
 On Mac OS X or Linux, `cd` into the project directory and run:
 
-    script/setup
+    bin/setup
 
 On Windows:
 
-1. Install [Ruby 2.3.1](http://ruby-lang.org)
+1. Install [Ruby 2.6.3 or higher](http://ruby-lang.org)
 2. Install [Bundler](http://gembundler.com)
 3. Run `bundle install` from the project directory
 4. Run `bundle exec middleman server` to start a local server

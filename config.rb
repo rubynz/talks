@@ -23,6 +23,9 @@ end
 activate :directory_indexes
 
 helpers do
+  def project_name
+    config[:project_name]
+  end
 
   def page_title(separator: " – ")
     [current_page.data.title, project_name].compact.join(separator)
@@ -39,11 +42,14 @@ helpers do
   def upcoming(date = nil, &block)
     date ||= current_talk.date
     content = capture(&block)
-    tag = content_tag(:div, content, class: 'upcoming',
-                                     data: { datetime: date.iso8601 })
-    concat tag
-  end
 
+    tag = content_tag(:div, content, {
+      class: 'upcoming',
+      data: { datetime: date.iso8601 }
+    })
+
+    concat(tag)
+  end
 end
 
 configure :build do
