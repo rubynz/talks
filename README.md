@@ -12,9 +12,9 @@ If you write a blog post and we accept it, Ruby NZ will send you an :sparkles: e
 
 Here is how to do this:
 
-- Fork this repository.
-- On your fork, add a file: `source/talks/<year>/<month>-<day>-title.md`
-- Add some front matter:
+1. Fork this repository.
+2. On your fork, add a file: `source/talks/<year>/<month>-<day>-title.md`
+3. Add some front matter:
 
 ```
 ---
@@ -25,12 +25,12 @@ intro: <your exciting intro>
 ---
 ```
 
-- Write some things with [Markdown](https://help.github.com/en/github/writing-on-github)
-- Open a pull request
-- Have it accepted
-- Tell us your mailing address
-- Receive :sparkles: exclusive :sparkles: prize pack
-- Be showered in community spirit and admiration from your peers
+4. Write some things with [Markdown](https://help.github.com/en/github/writing-on-github)
+5. Open a pull request
+6. Have it accepted
+7. Tell us your mailing address through Slack or email
+8. Receive :sparkles: exclusive :sparkles: prize pack
+9. Be showered in community spirit and admiration from your peers
 
 ## Development environment
 
