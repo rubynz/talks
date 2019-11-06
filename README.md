@@ -1,7 +1,5 @@
 # [NZ Ruby Talks](http://talks.ruby.org.nz)
 
-[![Dependency Status](https://gemnasium.com/nzruby/talks.png)](https://gemnasium.com/nzruby/talks)
-
 NZ talks about Ruby, powered by [Middleman](http://middlemanapp.com).
 
 You can view the site at [talks.ruby.org.nz](http://talks.ruby.org.nz).
