@@ -2,9 +2,35 @@
 
 [![Dependency Status](https://gemnasium.com/nzruby/talks.png)](https://gemnasium.com/nzruby/talks)
 
-Talks given at NZ Ruby groups, powered by [Middleman](http://middlemanapp.com).
+NZ talks about Ruby, powered by [Middleman](http://middlemanapp.com).
 
-You can view the talks at [talks.ruby.org.nz](http://talks.ruby.org.nz).
+You can view the site at [talks.ruby.org.nz](http://talks.ruby.org.nz).
+
+## Contributing
+
+If you write a blog post and we accept it, Ruby NZ will send you an :sparkles: exclusive :sparkles: prize pack. 
+
+Here is how to do this:
+
+- Fork this repository.
+- On your fork, add a file: `source/talks/<year>/<month>-<day>-title.md`
+- Add some front matter:
+
+```
+---
+title: <your amazing article>
+layout: talk
+author: <your beautiful name>
+intro: <your exciting intro>
+---
+```
+
+- Write some things with [Markdown](https://help.github.com/en/github/writing-on-github)
+- Open a pull request
+- Have it accepted
+- Tell us your mailing address
+- Receive :sparkles: exclusive :sparkles: prize pack
+- Be showered in community spirit and admiration from your peers
 
 ## Development environment
 
